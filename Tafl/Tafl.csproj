@@ -124,6 +124,22 @@
     <Resource Include="Resources\tile3.bmp" />
     <Resource Include="Resources\tile4.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\attacktile1.bmp" />
+    <Resource Include="Resources\attacktile2.bmp" />
+    <Resource Include="Resources\attacktile3.bmp" />
+    <Resource Include="Resources\attacktile4.bmp" />
+    <Resource Include="Resources\deftile1.bmp" />
+    <Resource Include="Resources\deftile2.bmp" />
+    <Resource Include="Resources\deftile3.bmp" />
+    <Resource Include="Resources\deftile4.bmp" />
+    <Resource Include="Resources\throne.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\blueopal.bmp" />
+    <Resource Include="Resources\fireopal.bmp" />
+    <Resource Include="Resources\redopal.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

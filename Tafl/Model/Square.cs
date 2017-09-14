@@ -27,7 +27,7 @@ namespace Tafl.Model
 
         public enum square_type
         {
-            Normal, Throne, AttackerStart, Corner
+            Normal, Throne, AttackerStart, Corner, DefenderStart
         };
 
         private occupation_type occupation;

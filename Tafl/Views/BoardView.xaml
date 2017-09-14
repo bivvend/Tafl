@@ -45,14 +45,50 @@
                     <ContentControl Background="Gray">
                         <Grid>
                             <Image Source="{Binding ImageName}" Stretch="Fill"></Image>
-                            <Ellipse Name="AttackerMarker" Margin="3" Fill="Red" Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
-                            <Ellipse Name="DefenderMarker" Margin="3" Fill="Yellow" Visibility="{Binding DefenderPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
-                            <Ellipse Name="KingMarker" Margin="3" Fill="Blue" Visibility="{Binding KingPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
+                            <Ellipse Name="AttackerMarker" Margin="3"  Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="/Tafl;component/Resources/blueopal.bmp"  Stretch="Fill"></ImageBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.BitmapEffect>
+                                    <DropShadowBitmapEffect Color="Black" Direction="-50" ShadowDepth="5" Softness=".2" />
+                                </Ellipse.BitmapEffect>
+                            </Ellipse>
+                            <Ellipse Name="DefenderMarker" Margin="3" Visibility="{Binding DefenderPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="/Tafl;component/Resources/redopal.bmp"  Stretch="Fill"></ImageBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.BitmapEffect>
+                                    <DropShadowBitmapEffect Color="Black" Direction="-50" ShadowDepth="5" Softness=".2" />
+                                </Ellipse.BitmapEffect>
+                            </Ellipse>
+                            <Ellipse Name="KingMarker" Margin="3" Visibility="{Binding KingPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="/Tafl;component/Resources/fireopal.bmp"  Stretch="Fill"></ImageBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.BitmapEffect>
+                                    <DropShadowBitmapEffect Color="Black" Direction="-50" ShadowDepth="5" Softness=".2" />
+                                </Ellipse.BitmapEffect>
+                            </Ellipse>
                         </Grid>
                     </ContentControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Grid.Column="3" Command="{Binding NewBoardCommand}">Test</Button>
+        <Grid Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" Margin="0,10,0,-10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Button Grid.Column="0" Grid.Row="0" Command="{Binding NewBoardCommand}">New Board</Button>
+            <StackPanel Grid.Column="0" Grid.Row="1">
+                <CheckBox Name="CheckBoxAIAttacker">AI is Attacker?</CheckBox>
+                <CheckBox Name="CheckBoxAIDefender">AI is Defender?</CheckBox>
+            </StackPanel>
+            <Label Name="LabelCurrentTurn" Grid.Row="2">1 - Attacker</Label>
+        </Grid>
     </Grid>
 </UserControl>
