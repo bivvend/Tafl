@@ -108,6 +108,22 @@
   <ItemGroup>
     <Folder Include="AI\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bottom.bmp" />
+    <Resource Include="Resources\corner-bl.bmp" />
+    <Resource Include="Resources\corner-br.bmp" />
+    <Resource Include="Resources\corner-tl.bmp" />
+    <Resource Include="Resources\corner-tr.bmp" />
+    <Resource Include="Resources\left.bmp" />
+    <Resource Include="Resources\right.bmp" />
+    <Resource Include="Resources\top.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\tile1.bmp" />
+    <Resource Include="Resources\tile2.bmp" />
+    <Resource Include="Resources\tile3.bmp" />
+    <Resource Include="Resources\tile4.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

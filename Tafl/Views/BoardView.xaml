@@ -6,10 +6,14 @@
              xmlns:local="clr-namespace:Tafl.Views"
              xmlns:viewModels ="clr-namespace:Tafl.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="400" d:DesignWidth="300">
     <UserControl.DataContext>
         <viewModels:BoardViewModel></viewModels:BoardViewModel>
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <!-- You can implement your own BooleanToVisibilityConverter but there is one already implemented. So the next line creates an instance of the BooleanToVisibilityConverter that you will be able to reference with the specified key -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -22,7 +26,15 @@
             <RowDefinition Height="11*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <ItemsControl ItemsSource="{Binding Board}" Grid.Column="1" Grid.Row="1">
+        <Image Name="BorderTopLeft" Grid.Row="0" Grid.Column="0" Source="/Tafl;component/Resources/corner-tl.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderTop" Grid.Row="0" Grid.Column="1" Source="/Tafl;component/Resources/top.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderTopRight" Grid.Row="0" Grid.Column="2" Source="/Tafl;component/Resources/corner-tr.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderRight" Grid.Row="1" Grid.Column="2" Source="/Tafl;component/Resources/right.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderBottomRight" Grid.Row="2" Grid.Column="2" Source="/Tafl;component/Resources/corner-br.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderBottom" Grid.Row="2" Grid.Column="1" Source="/Tafl;component/Resources/bottom.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderBottomLeft" Grid.Row="2" Grid.Column="0" Source="/Tafl;component/Resources/corner-bl.bmp" Stretch="Fill"></Image>
+        <Image Name="BorderLeft" Grid.Row="1" Grid.Column="0" Source="/Tafl;component/Resources/left.bmp" Stretch="Fill"></Image>
+        <ItemsControl ItemsSource="{Binding Path=Board}" Grid.Column="1" Grid.Row="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="11" Rows="11" />
@@ -31,11 +43,16 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Background="Gray">
-                        <Label Content="{Binding SquareType}"></Label>
+                        <Grid>
+                            <Image Source="{Binding ImageName}" Stretch="Fill"></Image>
+                            <Ellipse Name="AttackerMarker" Margin="3" Fill="Red" Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
+                            <Ellipse Name="DefenderMarker" Margin="3" Fill="Yellow" Visibility="{Binding DefenderPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
+                            <Ellipse Name="KingMarker" Margin="3" Fill="Blue" Visibility="{Binding KingPresent, Converter={StaticResource BooleanToVisibilityConverter}}"></Ellipse>
+                        </Grid>
                     </ContentControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Grid.Column="3" Command="{Binding TestCommand}">Test</Button>
+        <Button Grid.Column="3" Command="{Binding NewBoardCommand}">Test</Button>
     </Grid>
 </UserControl>

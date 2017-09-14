@@ -19,6 +19,7 @@ namespace Tafl.Model
             }
         }
 
+        
         public enum occupation_type
         {
             Attacker, Defender, King, Empty
@@ -39,7 +40,32 @@ namespace Tafl.Model
             set
             {
                 occupation = value;
+                if(value == occupation_type.Attacker)
+                {
+                    KingPresent = false;
+                    AttackerPresent = true;
+                    DefenderPresent = false;                    
+                }
+                if(value== occupation_type.Defender)
+                {
+                    KingPresent = false;
+                    AttackerPresent = false;
+                    DefenderPresent = true;
+                }
+                if(value == occupation_type.King)
+                {
+                    KingPresent = true;
+                    AttackerPresent = false;
+                    DefenderPresent = false;
+                }
+                if(value == occupation_type.Empty)
+                {
+                    KingPresent = false;
+                    AttackerPresent = false;
+                    DefenderPresent = false;
+                }
                 RaisePropertyChanged("Occupation");
+
             }
         }
 
@@ -56,6 +82,85 @@ namespace Tafl.Model
                 RaisePropertyChanged("SquareType");
             }
         }
+
+        public enum bare_tile_type
+        {
+            tile1, tile2, tile3, tile4
+        };
+
+        private bare_tile_type bareTileType;
+        public bare_tile_type BareTileType
+        {
+            get
+            {
+                return bareTileType;
+            }
+            set
+            {
+                bareTileType = value;
+                RaisePropertyChanged("BareTileType");
+            }
+        }
+
+        private bool attackerPresent;
+        public bool AttackerPresent
+        {
+            get
+            {
+                return attackerPresent;
+            }
+            set
+            {
+                attackerPresent = value;
+                RaisePropertyChanged("AttackerPresent");
+            }
+        }
+
+        private bool defenderPresent;
+        public bool DefenderPresent
+        {
+            get
+            {
+                return defenderPresent;
+            }
+            set
+            {
+                defenderPresent = value;
+                RaisePropertyChanged("DefenderPresent");
+            }
+        }
+        private bool kingPresent;
+        public bool KingPresent
+        {
+            get
+            {
+                return kingPresent;
+            }
+            set
+            {
+                kingPresent = value;
+                RaisePropertyChanged("KingPresent");
+            }
+        }
+
+
+
+
+        private string imageName;
+        public string ImageName
+        {
+            get
+            {
+                return imageName;
+            }
+            set
+            {
+                imageName = value;
+                RaisePropertyChanged("ImageName");
+            }
+
+        }
+
 
         private int row;
         public int Row
@@ -89,7 +194,17 @@ namespace Tafl.Model
 
         public Square()
         {
+            Random random = new Random();
+            double a_val = random.NextDouble();
 
+            if (a_val >= 0.0 && a_val < 0.25)
+                this.BareTileType = bare_tile_type.tile1;
+            if (a_val >= 0.25 && a_val < 0.5)
+                this.BareTileType = bare_tile_type.tile2;
+            if (a_val >= 0.5 && a_val < 0.75)
+                this.BareTileType = bare_tile_type.tile3;
+            if (a_val >= 0.75)
+                this.BareTileType = bare_tile_type.tile4;
         }
 
         public Square( int _row, int _column, occupation_type _occupancy_type, square_type _square_type)
@@ -98,6 +213,19 @@ namespace Tafl.Model
             this.Column = _column;
             this.Occupation = _occupancy_type;
             this.SquareType = _square_type;
+            Random random = new Random(_row*_column + _row + _column);
+            int seed = random.Next();
+            random = new Random(seed + _row + _column);            
+            double a_val = random.NextDouble();
+            if (a_val >= 0.0 && a_val < 0.25)
+                this.BareTileType = bare_tile_type.tile1;
+            if (a_val >= 0.25 && a_val < 0.5)
+                this.BareTileType = bare_tile_type.tile2;
+            if (a_val >= 0.5 && a_val < 0.75)
+                this.BareTileType = bare_tile_type.tile3;
+            if (a_val >= 0.75)
+                this.BareTileType = bare_tile_type.tile4;
+
         }
     }
 }

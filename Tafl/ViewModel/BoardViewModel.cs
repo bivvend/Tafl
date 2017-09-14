@@ -27,6 +27,8 @@ namespace Tafl.ViewModel
             }
         }
 
+       
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string propertyName)
@@ -45,7 +47,7 @@ namespace Tafl.ViewModel
             this.Board = new ObservableCollection<Model.Square>();
             CreateBoard();
             //Attach commands to Relays
-            CreateTestCommand();
+            CreateNewBoardCommand();
             
         }
 
@@ -56,32 +58,47 @@ namespace Tafl.ViewModel
                 for(int i = 0; i < BoardSetup.SizeY; i++)
                 {
                     Model.Square a_square = new Model.Square(i, j, Model.Square.occupation_type.Empty, Model.Square.square_type.Normal);
+                    if(a_square.BareTileType == Model.Square.bare_tile_type.tile1)
+                        a_square.ImageName = "/Tafl;component/Resources/tile1.bmp";
+                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile2)
+                        a_square.ImageName = "/Tafl;component/Resources/tile2.bmp";
+                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile3)
+                        a_square.ImageName = "/Tafl;component/Resources/tile3.bmp";
+                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile4)
+                        a_square.ImageName = "/Tafl;component/Resources/tile4.bmp";
                     Board.Add(a_square);
                 }
             }
-            RaisePropertyChanged("Board");
+            //Make corner squares
 
+            //Make central zone
+
+            //Make throne
+
+            //Make edge zones for attackers
+
+            RaisePropertyChanged("Board");
         }
 
-        public ICommand TestCommand
+        public ICommand NewBoardCommand
         {
             get;
             internal set;
         }
 
-        private bool CanExecuteTestCommand()
+        private bool CanExecuteNewBoardCommand()
         {
             return true;
         }
 
-        private void CreateTestCommand()
+        private void CreateNewBoardCommand()
         {
-            TestCommand = new RelayCommand(TestExecute, param => CanExecuteTestCommand());
+            NewBoardCommand = new RelayCommand(NewBoardExecute, param => CanExecuteNewBoardCommand());
         }
 
-        public void TestExecute(object obj)
+        public void NewBoardExecute(object obj)
         {
-            Board[0].SquareType = Model.Square.square_type.AttackerStart;
+            Board[0].Occupation = Model.Square.occupation_type.King;
         }
 
     }
