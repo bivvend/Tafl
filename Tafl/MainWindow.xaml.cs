@@ -20,9 +20,16 @@ namespace Tafl
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ViewModel.BoardViewModel MainBoardViewModel = new ViewModel.BoardViewModel();
+        private ViewModel.GameViewModel MainGameViewModel;
+
         public MainWindow()
         {
             InitializeComponent();
+            //Associate game and board.
+            this.MainGameViewModel = new ViewModel.GameViewModel(MainBoardViewModel);
+            this.MainBoardView.DataContext = MainBoardViewModel;
+            this.MainGameView.DataContext = MainGameViewModel;
         }
     }
 }

@@ -8,6 +8,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="550">
     <Grid>
-        <views:BoardView></views:BoardView>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <views:BoardView x:Name="MainBoardView" Grid.Column="0"></views:BoardView>
+        <views:GameView x:Name="MainGameView" Grid.Column="1"></views:GameView>
+        
     </Grid>
 </Window>

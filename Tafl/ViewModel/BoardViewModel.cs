@@ -46,8 +46,7 @@ namespace Tafl.ViewModel
 
             this.Board = new ObservableCollection<Model.Square>();
             CreateBoard();
-            //Attach commands to Relays
-            CreateNewBoardCommand();
+            
             
         }
 
@@ -125,26 +124,7 @@ namespace Tafl.ViewModel
             RaisePropertyChanged("Board");
         }
 
-        public ICommand NewBoardCommand
-        {
-            get;
-            internal set;
-        }
-
-        private bool CanExecuteNewBoardCommand()
-        {
-            return true;
-        }
-
-        private void CreateNewBoardCommand()
-        {
-            NewBoardCommand = new RelayCommand(NewBoardExecute, param => CanExecuteNewBoardCommand());
-        }
-
-        public void NewBoardExecute(object obj)
-        {
-            CreateBoard();
-        }
+        
 
     }
 }

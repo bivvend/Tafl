@@ -213,7 +213,7 @@ namespace Tafl.Model
             this.Column = _column;
             this.Occupation = _occupancy_type;
             this.SquareType = _square_type;
-            Random random = new Random(_row*_column + _row + _column);
+            Random random = new Random((_row+1)*(_column+1) + _row + _column);
             int seed = random.Next();
             random = new Random(seed + _row + _column);            
             double a_val = random.NextDouble();
