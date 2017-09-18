@@ -39,9 +39,18 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Background="Gray">
-                        <Grid>
-                            <Image Source="{Binding ImageName}" Stretch="Fill"></Image>
+                        <Grid>                            
+                            <Image Source="{Binding ImageName}" Stretch="Fill">
+                                
+                            </Image>
                             <Ellipse Name="AttackerMarker" Margin="3"  Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Ellipse.InputBindings>
+                                    <MouseBinding 
+                                    MouseAction="LeftClick" 
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}},Path=DataContext.SquareClickCommand}"
+                                    CommandParameter="{Binding Coords}">
+                                    </MouseBinding>
+                                </Ellipse.InputBindings>
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="/Tafl;component/Resources/blueopal.bmp"  Stretch="Fill"></ImageBrush>
                                 </Ellipse.Fill>
@@ -53,6 +62,13 @@
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="/Tafl;component/Resources/redopal.bmp"  Stretch="Fill"></ImageBrush>
                                 </Ellipse.Fill>
+                                <Ellipse.InputBindings>
+                                    <MouseBinding 
+                                    MouseAction="LeftClick" 
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}},Path=DataContext.SquareClickCommand}"
+                                    CommandParameter="{Binding Coords}">
+                                    </MouseBinding>
+                                </Ellipse.InputBindings>
                                 <Ellipse.BitmapEffect>
                                     <DropShadowBitmapEffect Color="Black" Direction="-50" ShadowDepth="5" Softness=".2" />
                                 </Ellipse.BitmapEffect>
@@ -61,6 +77,13 @@
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="/Tafl;component/Resources/fireopal.bmp"  Stretch="Fill"></ImageBrush>
                                 </Ellipse.Fill>
+                                <Ellipse.InputBindings>
+                                    <MouseBinding 
+                                    MouseAction="LeftClick" 
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}},Path=DataContext.SquareClickCommand}"
+                                    CommandParameter="{Binding Coords}">
+                                    </MouseBinding>
+                                </Ellipse.InputBindings>
                                 <Ellipse.BitmapEffect>
                                     <DropShadowBitmapEffect Color="Black" Direction="-50" ShadowDepth="5" Softness=".2" />
                                 </Ellipse.BitmapEffect>

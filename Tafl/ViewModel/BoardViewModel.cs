@@ -11,7 +11,9 @@ namespace Tafl.ViewModel
 {
     public class BoardViewModel: INotifyPropertyChanged
     {
+        public MainWindow parent;
         public Model.BoardModel BoardSetup = new Model.BoardModel();
+        public GameViewModel Game;
 
         private ObservableCollection<Model.Square> board;
         public ObservableCollection<Model.Square> Board
@@ -39,15 +41,15 @@ namespace Tafl.ViewModel
             }
         }
 
-        public BoardViewModel()
+        public BoardViewModel(MainWindow window)
         {
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
-
+            this.parent = window;
             this.Board = new ObservableCollection<Model.Square>();
             CreateBoard();
-            
-            
+            CreateSquareClickCommand();
+
         }
 
         public void CreateBoard()
@@ -124,7 +126,42 @@ namespace Tafl.ViewModel
             RaisePropertyChanged("Board");
         }
 
-        
+        public ICommand SquareClickCommand
+        {
+            get;
+            internal set;
+        }
+
+        private bool CanExecuteSquareClickCommand()
+        {
+            return true;
+        }
+
+        private void CreateSquareClickCommand()
+        {
+            SquareClickCommand = new RelayCommand(SquareClickExecute, param => CanExecuteSquareClickCommand());
+        }
+
+        public void SquareClickExecute(object obj)
+        {
+            int[] Coords = (int[]) obj;
+            foreach(Model.Square square in Board)
+            {
+                if(square.Row == Coords[1] && square.Column== Coords[0])
+                {
+
+                    if (square.AttackerPresent && parent.MainGameViewModel.AttackerIsAI==false && parent.MainGameViewModel.CurrentTurnState == Model.GameModel.TurnState.Attacker)
+                    {
+                        square.Occupation = Model.Square.occupation_type.King;
+                    }
+                    if (square.DefenderPresent && parent.MainGameViewModel.DefenderIsAI == false && parent.MainGameViewModel.CurrentTurnState == Model.GameModel.TurnState.Defender)
+                    {
+                        square.Occupation = Model.Square.occupation_type.King;
+                    }
+                }
+            }
+
+        }
 
     }
 }

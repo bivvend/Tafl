@@ -11,6 +11,8 @@ namespace Tafl.ViewModel
 {
     public class GameViewModel:INotifyPropertyChanged
     {
+        MainWindow parent;
+
         //Associated board
         private BoardViewModel board;
         public BoardViewModel Board
@@ -27,7 +29,7 @@ namespace Tafl.ViewModel
             
         }
 
-        private Model.GameModel gameModel;
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,6 +41,7 @@ namespace Tafl.ViewModel
             }
         }
 
+        private Model.GameModel gameModel;
         public Model.GameModel GameModel
         {
             get
@@ -47,18 +50,66 @@ namespace Tafl.ViewModel
             }
             set
             {
-                GameModel = value;
+                gameModel = value;
                 RaisePropertyChanged("GameModel");
             }
 
         }
-        
-        
-        public GameViewModel(BoardViewModel a_board)
+
+        private Model.GameModel.TurnState currentTurnState;
+
+        public Model.GameModel.TurnState CurrentTurnState
         {
+            get
+            {
+                return currentTurnState;
+            }
+            set
+            {
+                currentTurnState = value;
+                RaisePropertyChanged("CurrentTurnState");
+            }
+        }
+
+        private bool attackerIsAI;
+        public bool AttackerIsAI
+        {
+            get
+            {
+                return attackerIsAI;
+            }
+            set
+            {
+                attackerIsAI = value;
+                RaisePropertyChanged("AttackerIsAI");
+            }
+        }
+
+        private bool defenderIsAI;
+        public bool DefenderIsAI
+        {
+            get
+            {
+                return defenderIsAI;
+            }
+            set
+            {
+                defenderIsAI = value;
+                RaisePropertyChanged("DefenderIsAI");
+            }
+        }
+
+
+        public GameViewModel(BoardViewModel a_board, MainWindow window)
+        {
+            this.parent = window;
             //Attach commands to Relays
             CreateNewBoardCommand();
             this.Board = a_board;
+            this.GameModel = new Model.GameModel();
+            this.CurrentTurnState = Model.GameModel.TurnState.Attacker;
+            this.AttackerIsAI = true;
+            this.DefenderIsAI = true;            
         }        
 
 

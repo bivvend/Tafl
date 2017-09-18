@@ -172,7 +172,9 @@ namespace Tafl.Model
             set
             {
                 row = value;
+                Coords[0] = value;
                 RaisePropertyChanged("Row");
+                RaisePropertyChanged("Coords");
             }
         }
 
@@ -188,7 +190,23 @@ namespace Tafl.Model
             set
             {
                 column = value;
+                Coords[0] = value;
                 RaisePropertyChanged("Column");
+                RaisePropertyChanged("Coords");
+            }
+        }
+
+        private int[] coords;
+        public int[] Coords
+        {
+            get
+            {
+                return coords;
+            }
+            set
+            {
+                coords = value;
+                RaisePropertyChanged("Coords");
             }
         }
 
@@ -207,8 +225,9 @@ namespace Tafl.Model
                 this.BareTileType = bare_tile_type.tile4;
         }
 
-        public Square( int _row, int _column, occupation_type _occupancy_type, square_type _square_type)
+        public Square( int _column, int _row, occupation_type _occupancy_type, square_type _square_type)
         {
+            this.Coords = new int[] { _column, _row };
             this.Row = _row;
             this.Column = _column;
             this.Occupation = _occupancy_type;
