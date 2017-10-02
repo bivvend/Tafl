@@ -23,16 +23,23 @@ namespace Tafl
         public ViewModel.BoardViewModel MainBoardViewModel;
         public ViewModel.GameViewModel MainGameViewModel;
 
+        public Model.BoardModel MainBoardModel;
+        public Model.GameModel MainGameModel;
+
         public MainWindow()
         {
             InitializeComponent();
-            MainBoardViewModel = new ViewModel.BoardViewModel(this);
-            //Associate game and board.
-            this.MainGameViewModel = new ViewModel.GameViewModel(MainBoardViewModel,this);
-            //Associate board and game
-            
-            this.MainBoardView.DataContext = MainBoardViewModel;
-            this.MainGameView.DataContext = MainGameViewModel;
+
+            MainBoardModel = new Model.BoardModel();           
+
+            MainGameModel = new Model.GameModel();
+
+            MainBoardViewModel = new ViewModel.BoardViewModel(MainBoardModel, MainGameModel);
+            MainGameViewModel = new ViewModel.GameViewModel(MainBoardModel, MainGameModel);
+            MainBoardView.DataContext = MainBoardViewModel;
+            MainGameView.DataContext = MainGameViewModel;
+
+            MainBoardModel.CreateBoard();
         }
     }
 }

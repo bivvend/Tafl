@@ -12,19 +12,19 @@ namespace Tafl.ViewModel
     public class BoardViewModel: INotifyPropertyChanged
     {
         public MainWindow parent;
-        public Model.BoardModel BoardSetup = new Model.BoardModel();
-        public GameViewModel Game;
+        public Model.BoardModel BoardSetup;
+        public Model.GameModel Game;
 
         private ObservableCollection<Model.Square> board;
         public ObservableCollection<Model.Square> Board
         {
             get
             {
-                return board;
+                return BoardSetup.board;
             }
             set
             {
-                board = value;
+                BoardSetup.board = value;
                 RaisePropertyChanged("Board");
             }
         }
@@ -41,90 +41,19 @@ namespace Tafl.ViewModel
             }
         }
 
-        public BoardViewModel(MainWindow window)
+        public BoardViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
         {
+            BoardSetup = boardModel;
+            Game = gameModel;
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
-            this.parent = window;
-            this.Board = new ObservableCollection<Model.Square>();
-            CreateBoard();
+            this.BoardSetup = boardModel;
+            this.Game = gameModel;            
             CreateSquareClickCommand();
-
+            
         }
 
-        public void CreateBoard()
-        {
-            this.Board.Clear();
-            for (int j = 0; j < BoardSetup.SizeY;  j++)
-            {
-                for(int i = 0; i < BoardSetup.SizeX; i++)
-                {
-                    Model.Square a_square = new Model.Square(i, j, Model.Square.occupation_type.Empty, Model.Square.square_type.Normal);
-                    if(a_square.BareTileType == Model.Square.bare_tile_type.tile1)
-                        a_square.ImageName = "/Tafl;component/Resources/tile1.bmp";
-                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile2)
-                        a_square.ImageName = "/Tafl;component/Resources/tile2.bmp";
-                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile3)
-                        a_square.ImageName = "/Tafl;component/Resources/tile3.bmp";
-                    if (a_square.BareTileType == Model.Square.bare_tile_type.tile4)
-                        a_square.ImageName = "/Tafl;component/Resources/tile4.bmp";
-
-
-                    //Make corner squares
-                    if((i==0 && j==0) || (i==0 && j==BoardSetup.SizeY-1) || (i==BoardSetup.SizeX-1 && j==0) || (i==BoardSetup.SizeX-1 && j==BoardSetup.SizeY-1))
-                    {
-                        a_square.SquareType = Model.Square.square_type.Corner;
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile1)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile1.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile2)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile2.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile3)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile3.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile4)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile4.bmp";
-
-                    }
-                    //Make central (Defender) zone
-                    if( (i==3 && j ==5)  ||   (i==4 && j>3 && j<7) || (i==5 && j>2 && j<8)  || (i==6 && j>3 && j < 7) ||  (i==7 && j==5))
-                    {
-                        a_square.SquareType = Model.Square.square_type.DefenderStart;
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile1)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile1.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile2)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile2.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile3)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile3.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile4)
-                            a_square.ImageName = "/Tafl;component/Resources/deftile4.bmp";
-                        a_square.Occupation = Model.Square.occupation_type.Defender;
-                    }
-                    //Make throne
-                    if( i== BoardSetup.SizeX/2 && j==BoardSetup.SizeY/2)
-                    {
-                        a_square.SquareType = Model.Square.square_type.Throne;
-                        a_square.ImageName = "/Tafl;component/Resources/throne.bmp";
-                        a_square.Occupation = Model.Square.occupation_type.King;
-                    }
-                    //Make edge zones for attackers
-                    if( ((i==0 && j>2 && j <8) || (i== 1 && j==5))    || ((i == 10 && j > 2 && j < 8) || (i == 9 && j == 5))  || ((j == 0 && i > 2 && i < 8) || (j == 1 && i == 5))  || ((j == 10 && i > 2 && i < 8) || (j == 9 && i == 5)))
-                    {
-                        a_square.SquareType = Model.Square.square_type.AttackerStart;
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile1)
-                            a_square.ImageName = "/Tafl;component/Resources/attacktile1.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile2)
-                            a_square.ImageName = "/Tafl;component/Resources/attacktile2.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile3)
-                            a_square.ImageName = "/Tafl;component/Resources/attacktile3.bmp";
-                        if (a_square.BareTileType == Model.Square.bare_tile_type.tile4)
-                            a_square.ImageName = "/Tafl;component/Resources/attacktile4.bmp";
-                        a_square.Occupation = Model.Square.occupation_type.Attacker;
-                    }
-                    Board.Add(a_square);
-                }
-            }            
-
-            RaisePropertyChanged("Board");
-        }
+        
 
         public ICommand SquareClickCommand
         {
@@ -150,11 +79,11 @@ namespace Tafl.ViewModel
                 if(square.Row == Coords[1] && square.Column== Coords[0])
                 {
 
-                    if (square.AttackerPresent && parent.MainGameViewModel.AttackerIsAI==false && parent.MainGameViewModel.CurrentTurnState == Model.GameModel.TurnState.Attacker)
+                    if (square.AttackerPresent && Game.attackerIsAI==false && Game.currentTurnState == Model.GameModel.TurnState.Attacker)
                     {
                         square.Occupation = Model.Square.occupation_type.King;
                     }
-                    if (square.DefenderPresent && parent.MainGameViewModel.DefenderIsAI == false && parent.MainGameViewModel.CurrentTurnState == Model.GameModel.TurnState.Defender)
+                    if (square.DefenderPresent && Game.defenderIsAI == false && Game.currentTurnState == Model.GameModel.TurnState.Defender)
                     {
                         square.Occupation = Model.Square.occupation_type.King;
                     }

@@ -11,26 +11,7 @@ namespace Tafl.ViewModel
 {
     public class GameViewModel:INotifyPropertyChanged
     {
-        MainWindow parent;
-
-        //Associated board
-        private BoardViewModel board;
-        public BoardViewModel Board
-        {
-            get
-            {
-                return this.board;
-            }
-            set
-            {
-                this.board = value;
-                RaisePropertyChanged("Board");
-            }
-            
-        }
-
-        
-
+         
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string propertyName)
@@ -42,7 +23,7 @@ namespace Tafl.ViewModel
         }
 
         private Model.GameModel gameModel;
-        public Model.GameModel GameModel
+        public Model.GameModel Game
         {
             get
             {
@@ -51,36 +32,49 @@ namespace Tafl.ViewModel
             set
             {
                 gameModel = value;
-                RaisePropertyChanged("GameModel");
+                
             }
 
         }
 
-        private Model.GameModel.TurnState currentTurnState;
+        private Model.BoardModel boardModel;
+        public Model.BoardModel Board
+        {
+            get
+            {
+                return boardModel;
+            }
+            set
+            {
+                boardModel = value;
+
+            }
+
+        }        
 
         public Model.GameModel.TurnState CurrentTurnState
         {
             get
             {
-                return currentTurnState;
+                return Game.currentTurnState;
             }
             set
             {
-                currentTurnState = value;
+                Game.currentTurnState = value;
                 RaisePropertyChanged("CurrentTurnState");
             }
         }
 
-        private bool attackerIsAI;
+        
         public bool AttackerIsAI
         {
             get
             {
-                return attackerIsAI;
+                return Game.attackerIsAI;
             }
             set
             {
-                attackerIsAI = value;
+                Game.attackerIsAI = value;
                 RaisePropertyChanged("AttackerIsAI");
             }
         }
@@ -100,16 +94,13 @@ namespace Tafl.ViewModel
         }
 
 
-        public GameViewModel(BoardViewModel a_board, MainWindow window)
+        public GameViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
         {
-            this.parent = window;
             //Attach commands to Relays
             CreateNewBoardCommand();
-            this.Board = a_board;
-            this.GameModel = new Model.GameModel();
-            this.CurrentTurnState = Model.GameModel.TurnState.Attacker;
-            this.AttackerIsAI = true;
-            this.DefenderIsAI = true;            
+            Board = boardModel;
+            Game = gameModel;
+                       
         }        
 
 

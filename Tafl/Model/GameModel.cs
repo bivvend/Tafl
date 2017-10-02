@@ -10,6 +10,12 @@ namespace Tafl.Model
     public class GameModel: INotifyPropertyChanged 
     {
 
+        public TurnState currentTurnState;
+
+        public bool attackerIsAI;
+
+        public bool defenderIsAI;
+
         public enum TurnState
         {
             Attacker, Defender
