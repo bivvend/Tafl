@@ -18,7 +18,7 @@ namespace Tafl.ViewModel
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
@@ -50,7 +50,9 @@ namespace Tafl.ViewModel
 
             }
 
-        }        
+        }
+
+        
 
         public Model.GameModel.TurnState CurrentTurnState
         {
@@ -93,32 +95,23 @@ namespace Tafl.ViewModel
             }
         }
 
-
-        public GameViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
-        {
-            //Attach commands to Relays
-            CreateNewBoardCommand();
-            Board = boardModel;
-            Game = gameModel;
-                       
-        }        
-
-
         public ICommand NewBoardCommand
         {
             get;
             internal set;
         }
 
-        private bool CanExecuteNewBoardCommand()
+        public GameViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
         {
-            return true;
-        }
 
-        private void CreateNewBoardCommand()
-        {
-            NewBoardCommand = new RelayCommand(NewBoardExecute, param => CanExecuteNewBoardCommand());
-        }
+            Board = boardModel;
+            Game = gameModel;
+            //Attach commands to relays
+            NewBoardCommand = new RelayCommand(NewBoardExecute, param => true);
+        }        
+
+
+
 
         public void NewBoardExecute(object obj)
         {

@@ -43,6 +43,9 @@
                             <Image Source="{Binding ImageName}" Stretch="Fill">
                                 
                             </Image>
+                            <Border BorderThickness="3" BorderBrush="Green" Visibility="{Binding Selected,  Converter={StaticResource BooleanToVisibilityConverter}}">
+                                
+                            </Border>
                             <Ellipse Name="AttackerMarker" Margin="3"  Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Ellipse.InputBindings>
                                     <MouseBinding 

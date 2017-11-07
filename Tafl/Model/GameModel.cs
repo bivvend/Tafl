@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tafl.Model
 {
-    public class GameModel: INotifyPropertyChanged 
+    public class GameModel
     {
 
         public TurnState currentTurnState;
@@ -20,15 +20,6 @@ namespace Tafl.Model
         {
             Attacker, Defender
         };
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
 
         
     }

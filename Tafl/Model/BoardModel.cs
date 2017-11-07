@@ -8,17 +8,8 @@ using System.Collections.ObjectModel;
 
 namespace Tafl.Model
 {
-    public class BoardModel: INotifyPropertyChanged
+    public class BoardModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
 
         public ObservableCollection<Model.Square> board;
 

@@ -12,8 +12,12 @@
             <ColumnDefinition Width="5*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <views:BoardView x:Name="MainBoardView" Grid.Column="0"></views:BoardView>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <views:BoardView x:Name="MainBoardView" Grid.Column="0" Grid.RowSpan="2"></views:BoardView>
         <views:GameView x:Name="MainGameView" Grid.Column="1"></views:GameView>
-        
+        <views:PieceView x:Name="MainPieceInfoView" Grid.Column="1" Grid.Row="1"></views:PieceView>        
     </Grid>
 </Window>

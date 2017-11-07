@@ -39,6 +39,9 @@ namespace Tafl
             MainBoardView.DataContext = MainBoardViewModel;
             MainGameView.DataContext = MainGameViewModel;
 
+            MainBoardViewModel.PieceInfo = this.MainPieceInfoView;
+            MainBoardViewModel.PieceInfo.DataContext = MainBoardViewModel;
+
             MainBoardModel.CreateBoard();
         }
     }

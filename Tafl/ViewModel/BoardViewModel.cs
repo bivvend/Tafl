@@ -14,8 +14,8 @@ namespace Tafl.ViewModel
         public MainWindow parent;
         public Model.BoardModel BoardSetup;
         public Model.GameModel Game;
+        public Views.PieceView PieceInfo;
 
-        private ObservableCollection<Model.Square> board;
         public ObservableCollection<Model.Square> Board
         {
             get
@@ -29,7 +29,16 @@ namespace Tafl.ViewModel
             }
         }
 
-       
+        private string pieceInfoString = "No piece selected";
+        public string PieceInfoString
+        {
+            get => pieceInfoString;
+            set
+            {
+                pieceInfoString = value;
+                RaisePropertyChanged("PieceInfoString");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -41,6 +50,9 @@ namespace Tafl.ViewModel
             }
         }
 
+        public ICommand SquareClickCommand { get; private set; }
+
+
         public BoardViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
         {
             BoardSetup = boardModel;
@@ -48,28 +60,15 @@ namespace Tafl.ViewModel
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
             this.BoardSetup = boardModel;
-            this.Game = gameModel;            
-            CreateSquareClickCommand();
-            
+            this.Game = gameModel;
+
+            //SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
+            SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
         }
 
         
 
-        public ICommand SquareClickCommand
-        {
-            get;
-            internal set;
-        }
-
-        private bool CanExecuteSquareClickCommand()
-        {
-            return true;
-        }
-
-        private void CreateSquareClickCommand()
-        {
-            SquareClickCommand = new RelayCommand(SquareClickExecute, param => CanExecuteSquareClickCommand());
-        }
+        
 
         public void SquareClickExecute(object obj)
         {
@@ -81,16 +80,43 @@ namespace Tafl.ViewModel
 
                     if (square.AttackerPresent && Game.attackerIsAI==false && Game.currentTurnState == Model.GameModel.TurnState.Attacker)
                     {
-                        square.Occupation = Model.Square.occupation_type.King;
+                        SelectSquare(square);
+                        
                     }
                     if (square.DefenderPresent && Game.defenderIsAI == false && Game.currentTurnState == Model.GameModel.TurnState.Defender)
                     {
-                        square.Occupation = Model.Square.occupation_type.King;
+                        SelectSquare(square);
                     }
                 }
             }
-
         }
 
+        private void SelectSquare(Model.Square squareToSelect)
+        {
+            //Deselect all other squares
+            foreach (Model.Square square in Board)
+            {
+                if (square.Row != squareToSelect.Row || square.Column != squareToSelect.Column)
+                {
+                    square.Selected = false;
+                }
+            }
+            bool selectionMade = !squareToSelect.Selected;
+            if(selectionMade)
+            {
+                PieceInfoString = String.Format("Row {0} Column {0}", squareToSelect.Row, squareToSelect.Column);
+            }
+            else
+            {
+                PieceInfoString = "No piece selected";
+            }
+
+            squareToSelect.Selected = !squareToSelect.Selected;
+        }
+
+        private void HighlightPossibleMoves(Model.Square squareSelected)
+        {
+
+        }
     }
 }

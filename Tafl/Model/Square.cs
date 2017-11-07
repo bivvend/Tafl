@@ -15,7 +15,7 @@ namespace Tafl.Model
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+               PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
@@ -209,6 +209,29 @@ namespace Tafl.Model
                 RaisePropertyChanged("Coords");
             }
         }
+
+        private bool selected;
+        public bool Selected
+        {
+            get => selected;
+            set
+            {
+                selected = value;
+                RaisePropertyChanged("Selected");
+            }
+        }
+
+        private bool highlighted;
+        public bool Highlighted
+        {
+            get => highlighted;
+            set
+            {
+                highlighted = value;
+                RaisePropertyChanged("Highlighted");
+            }
+        }
+
 
         public Square()
         {
