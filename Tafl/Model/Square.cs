@@ -246,6 +246,8 @@ namespace Tafl.Model
                 this.BareTileType = bare_tile_type.tile3;
             if (a_val >= 0.75)
                 this.BareTileType = bare_tile_type.tile4;
+            Highlighted = false;
+            Selected = false;
         }
 
         public Square( int _column, int _row, occupation_type _occupancy_type, square_type _square_type)
@@ -267,7 +269,8 @@ namespace Tafl.Model
                 this.BareTileType = bare_tile_type.tile3;
             if (a_val >= 0.75)
                 this.BareTileType = bare_tile_type.tile4;
-
+            Highlighted = false;
+            Selected = false;
         }
     }
 }

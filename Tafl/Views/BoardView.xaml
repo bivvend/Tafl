@@ -41,9 +41,16 @@
                     <ContentControl Background="Gray">
                         <Grid>                            
                             <Image Source="{Binding ImageName}" Stretch="Fill">
-                                
+                                <Image.InputBindings>
+                                    <MouseBinding 
+                                    MouseAction="LeftClick" 
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}},Path=DataContext.EmptySquareClickCommand}"
+                                    CommandParameter="{Binding Coords}">
+                                    </MouseBinding>
+                                </Image.InputBindings>
                             </Image>
-                            <Border BorderThickness="3" BorderBrush="Green" Visibility="{Binding Selected,  Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border BorderThickness="3" BorderBrush="Green" Visibility="{Binding Selected,  Converter={StaticResource BooleanToVisibilityConverter}}"></Border>
+                            <Border BorderThickness="3" BorderBrush="LightGreen" Visibility="{Binding Highlighted,  Converter={StaticResource BooleanToVisibilityConverter}}">
                                 
                             </Border>
                             <Ellipse Name="AttackerMarker" Margin="3"  Visibility="{Binding AttackerPresent, Converter={StaticResource BooleanToVisibilityConverter}}">

@@ -55,6 +55,36 @@ namespace Tafl.Model
             CreateBoard();
         }
 
+        public bool MovePiece(int startRow, int startColumn,  int endRow, int endColumn)
+        {
+            Square startSquare = GetSquare(startRow, startColumn);
+            Square endSquare = GetSquare(endRow, endColumn);
+
+            if(startSquare!=null && endSquare!=null)
+            {
+
+                endSquare.Occupation = startSquare.Occupation;
+                startSquare.Occupation = Square.occupation_type.Empty;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private Square GetSquare(int Row, int Column)
+        {
+            Square squareFound = null;
+
+            List<Square> squaresFound = board.Where((item) => item.Column == Column && item.Row == Row).ToList();
+            if (squaresFound.Count > 0)
+            {
+                squareFound = squaresFound[0];
+            }
+            return squareFound;
+        }
+
         public void CreateBoard()
         {
             this.board.Clear();
