@@ -65,6 +65,8 @@ namespace Tafl.Model
 
                 endSquare.Occupation = startSquare.Occupation;
                 startSquare.Occupation = Square.occupation_type.Empty;
+                CheckAndProcessTake(endSquare);
+
                 return true;
             }
             else
@@ -72,6 +74,65 @@ namespace Tafl.Model
                 return false;
             }
         }
+
+        private enum direction
+        {
+            FromBelow,FromAbove,FromLeft,FromRight
+        };
+
+
+
+        private void SearchAroundForTake(Square squareToCheck, Square endSquare, direction dir )
+        {
+            if (squareToCheck.Occupation != Square.occupation_type.Empty) //Something in the square
+            {
+                if (squareToCheck.AttackerPresent && (endSquare.KingPresent || endSquare.DefenderPresent))
+                {
+                    //Defender or King moved next to Attacker
+                    //Look 2 squares away in given direction
+                    switch(dir)
+                    {
+                        case direction.FromAbove:
+                            break;
+                        case direction.FromBelow:
+                            break;
+                        case direction.FromLeft:
+                            break;
+                        case direction.FromRight:
+                            break;
+                    }
+                    
+                }
+                if (squareToCheck.DefenderPresent && endSquare.AttackerPresent)
+                {
+                    //Attacker moved next to defender
+                }
+            }
+        }
+
+        /// <summary>
+        /// Look at all the pieces next to the piece that just moved and see if these can be taken
+        /// </summary>
+        /// <param name="endSquare"></param>
+        public void CheckAndProcessTake(Square endSquare)
+        {
+            //Check UP 1 ROW
+            Square squareToCheck = GetSquare(endSquare.Row - 1, endSquare.Column);
+            if (squareToCheck!=null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromBelow);
+            }
+
+            //Check DOWN 1 ROW
+        
+            //Check LEFT 1 COLUMN
+
+            //Check RIGHT 1 COLUMN
+
+
+        }
+
+
 
         private Square GetSquare(int Row, int Column)
         {

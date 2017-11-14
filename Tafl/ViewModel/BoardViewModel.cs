@@ -168,6 +168,7 @@ namespace Tafl.ViewModel
             squareToSelect.Selected = !squareToSelect.Selected;
         }
 
+
         private void HighlightPossibleMoves(Square squareSelected)
         {
             int startColumn = squareSelected.Column;
@@ -181,15 +182,27 @@ namespace Tafl.ViewModel
             for (int N = startColumn-1; N>=0; N--)
             {
                 aSquare = GetSquare(startRow, N);
-                if ( aSquare != null)
+                if (aSquare != null)
                 {
-                    if(aSquare.Occupation == Square.occupation_type.Empty)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
                     {
-                        aSquare.Highlighted = true;
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                        {
+                            aSquare.Highlighted = true;
+                        }
+                        else
+                        {
+                            if (squareSelected.KingPresent)
+                            {
+                                aSquare.Highlighted = true;
+                            }
+                        }
                     }
                     else
                     {
-                        break;
+                        //Don't break for Throne
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                            break;
                     }
                 }
             }
@@ -201,13 +214,25 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(startRow, N);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
                     {
-                        aSquare.Highlighted = true;
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                        {
+                            aSquare.Highlighted = true;
+                        }
+                        else
+                        {
+                            if (squareSelected.KingPresent)
+                            {
+                                aSquare.Highlighted = true;
+                            }
+                        }
                     }
                     else
                     {
-                        break;
+                        //Don't break for Throne
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                            break;
                     }
                 }
             }
@@ -219,13 +244,25 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(N, startColumn);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
                     {
-                        aSquare.Highlighted = true;
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                        {
+                            aSquare.Highlighted = true;
+                        }
+                        else
+                        {
+                            if(squareSelected.KingPresent)
+                            {
+                                aSquare.Highlighted = true;
+                            }
+                        }
                     }
                     else
                     {
-                        break;
+                        //Don't break for Throne
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                            break;
                     }
                 }
             }
@@ -236,13 +273,25 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(N, startColumn);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
                     {
-                        aSquare.Highlighted = true;
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                        {
+                            aSquare.Highlighted = true;
+                        }
+                        else
+                        {
+                            if (squareSelected.KingPresent)
+                            {
+                                aSquare.Highlighted = true;
+                            }
+                        }
                     }
                     else
                     {
-                        break;
+                        //Don't break for Throne
+                        if (aSquare.SquareType != Square.square_type.Throne)
+                            break;
                     }
                 }
             }

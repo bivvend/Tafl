@@ -116,6 +116,7 @@ namespace Tafl.ViewModel
         public void NewBoardExecute(object obj)
         {
             Board.CreateBoard();
+            Game.currentTurnState = Model.GameModel.TurnState.Attacker;
         }
     }
 
