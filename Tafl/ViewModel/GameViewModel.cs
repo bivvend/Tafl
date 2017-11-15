@@ -31,8 +31,7 @@ namespace Tafl.ViewModel
             }
             set
             {
-                gameModel = value;
-                
+                gameModel = value;                
             }
 
         }
@@ -52,8 +51,8 @@ namespace Tafl.ViewModel
 
         }
 
-        
 
+        private Model.GameModel.TurnState currentTurnState;
         public Model.GameModel.TurnState CurrentTurnState
         {
             get
@@ -62,12 +61,14 @@ namespace Tafl.ViewModel
             }
             set
             {
+                
                 Game.currentTurnState = value;
+                currentTurnState = value;
                 RaisePropertyChanged("CurrentTurnState");
             }
         }
 
-        
+        private bool attackerIsAI;
         public bool AttackerIsAI
         {
             get
@@ -77,6 +78,7 @@ namespace Tafl.ViewModel
             set
             {
                 Game.attackerIsAI = value;
+                attackerIsAI = value;
                 RaisePropertyChanged("AttackerIsAI");
             }
         }
@@ -86,11 +88,12 @@ namespace Tafl.ViewModel
         {
             get
             {
-                return defenderIsAI;
+                return Game.defenderIsAI;
             }
             set
             {
                 defenderIsAI = value;
+                Game.defenderIsAI = value;
                 RaisePropertyChanged("DefenderIsAI");
             }
         }
@@ -116,7 +119,7 @@ namespace Tafl.ViewModel
         public void NewBoardExecute(object obj)
         {
             Board.CreateBoard();
-            Game.currentTurnState = Model.GameModel.TurnState.Attacker;
+            CurrentTurnState = Model.GameModel.TurnState.Attacker;
         }
     }
 

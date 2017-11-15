@@ -15,6 +15,7 @@ namespace Tafl.ViewModel
         public MainWindow parent;
         public BoardModel BoardSetup;
         public GameModel Game;
+        public GameViewModel GameVModel;
         public Views.PieceView PieceInfo;
 
         public Square SelectedSquare { get; set; }
@@ -56,13 +57,12 @@ namespace Tafl.ViewModel
         public ICommand SquareClickCommand { get; private set; }
         public ICommand EmptySquareClickCommand { get; private set; }
 
-        public BoardViewModel(Model.BoardModel boardModel, GameModel gameModel)
+        public BoardViewModel(Model.BoardModel boardModel, GameViewModel gameViewModel)
         {
             BoardSetup = boardModel;
-            Game = gameModel;
+            GameVModel = gameViewModel;            
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
-            this.Game = gameModel;
 
             //SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
             SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
@@ -71,7 +71,7 @@ namespace Tafl.ViewModel
 
         public void EmptySquareClickExecute(object obj)
         {
-            int[] Coords = (int[])obj;
+            int[] Coords = (int[])obj;           
             foreach (Model.Square square in Board)
             {
                 if (square.Row == Coords[1] && square.Column == Coords[0])
@@ -83,13 +83,40 @@ namespace Tafl.ViewModel
                             SelectedSquare.Selected = false;
                             SelectedSquare = null;
                             Board.ToList().ForEach((item) => item.Highlighted = false);
-                            if (Game.currentTurnState == GameModel.TurnState.Attacker)
+                            
+
+                            //Check for Defender victory
+                            if(square.SquareType == Square.square_type.Corner && square.KingPresent)
                             {
-                                Game.currentTurnState = GameModel.TurnState.Defender;
+                                //Defended Won!
+                                GameVModel.CurrentTurnState = GameModel.TurnState.VictoryDefender;
                             }
-                            else if(Game.currentTurnState == GameModel.TurnState.Defender)
+
+                            //Check for Attacker victory
+                            if(GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
                             {
-                                Game.currentTurnState = GameModel.TurnState.Attacker;
+                                //Is king surrounded on 4 sides
+                                Board.ToList().ForEach((item) =>
+                                {
+                                    if(item.KingPresent)
+                                    {
+                                        if(BoardSetup.CheckForAttackerVictory())
+                                        {
+                                            GameVModel.CurrentTurnState = GameModel.TurnState.VictoryAttacker;
+                                        }
+                                    }                                   
+
+                                });
+                            }
+
+                            //Next Turn
+                            if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
+                            {
+                                GameVModel.CurrentTurnState = GameModel.TurnState.Defender;
+                            }
+                            else if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
+                            {
+                                GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
                             }
 
                         }
@@ -112,12 +139,12 @@ namespace Tafl.ViewModel
                 if(square.Row == Coords[1] && square.Column== Coords[0])
                 {
                     
-                    if (square.AttackerPresent && Game.attackerIsAI == false && Game.currentTurnState == Model.GameModel.TurnState.Attacker)
+                    if (square.AttackerPresent && GameVModel.AttackerIsAI == false && GameVModel.CurrentTurnState == Model.GameModel.TurnState.Attacker)
                     {
                         ApplySelection(square);
 
                     }
-                    if ((square.DefenderPresent || square.KingPresent) && Game.defenderIsAI == false && Game.currentTurnState == Model.GameModel.TurnState.Defender)
+                    if ((square.DefenderPresent || square.KingPresent) && GameVModel.DefenderIsAI == false && GameVModel.CurrentTurnState == Model.GameModel.TurnState.Defender)
                     {
                         ApplySelection(square);
                     }
@@ -184,7 +211,7 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(startRow, N);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && (aSquare.SquareType != Square.square_type.Corner || squareSelected.KingPresent))
                     {
                         if (aSquare.SquareType != Square.square_type.Throne)
                         {
@@ -214,7 +241,7 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(startRow, N);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && (aSquare.SquareType != Square.square_type.Corner || squareSelected.KingPresent))
                     {
                         if (aSquare.SquareType != Square.square_type.Throne)
                         {
@@ -244,7 +271,7 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(N, startColumn);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && (aSquare.SquareType != Square.square_type.Corner || squareSelected.KingPresent))
                     {
                         if (aSquare.SquareType != Square.square_type.Throne)
                         {
@@ -273,7 +300,7 @@ namespace Tafl.ViewModel
                 aSquare = GetSquare(N, startColumn);
                 if (aSquare != null)
                 {
-                    if (aSquare.Occupation == Square.occupation_type.Empty && aSquare.SquareType != Square.square_type.Corner)
+                    if (aSquare.Occupation == Square.occupation_type.Empty && (aSquare.SquareType != Square.square_type.Corner || squareSelected.KingPresent))
                     {
                         if (aSquare.SquareType != Square.square_type.Throne)
                         {

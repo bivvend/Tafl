@@ -18,7 +18,7 @@ namespace Tafl.Model
 
         public enum TurnState
         {
-            Attacker, Defender
+            Attacker, Defender, VictoryDefender, VictoryAttacker
         };
 
         

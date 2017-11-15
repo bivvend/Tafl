@@ -55,6 +55,12 @@ namespace Tafl.Model
             CreateBoard();
         }
 
+        public bool CheckForAttackerVictory()
+        {
+
+            return false;
+        }
+
         public bool MovePiece(int startRow, int startColumn,  int endRow, int endColumn)
         {
             Square startSquare = GetSquare(startRow, startColumn);
@@ -84,28 +90,63 @@ namespace Tafl.Model
 
         private void SearchAroundForTake(Square squareToCheck, Square endSquare, direction dir )
         {
+            //squareToCheck is the square with the possible piece to be taken,  endSquare is the square into which the possible taker moved, direction is the direction that the taker moved w.r.t takee.
+            Square squareTwoAway = null;
             if (squareToCheck.Occupation != Square.occupation_type.Empty) //Something in the square
             {
                 if (squareToCheck.AttackerPresent && (endSquare.KingPresent || endSquare.DefenderPresent))
                 {
                     //Defender or King moved next to Attacker
-                    //Look 2 squares away in given direction
+                    //Look 2 squares away in given direction for defender or King
                     switch(dir)
                     {
                         case direction.FromAbove:
+                            squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column); 
                             break;
                         case direction.FromBelow:
+                            squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
                             break;
                         case direction.FromLeft:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
                             break;
                         case direction.FromRight:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
                             break;
                     }
-                    
+                    if (squareTwoAway != null)
+                    {
+                        if (squareTwoAway.DefenderPresent || squareTwoAway.KingPresent || squareTwoAway.SquareType == Square.square_type.Corner)
+                        {
+                            squareToCheck.Occupation = Square.occupation_type.Empty;
+                        }
+                    }
+
                 }
                 if (squareToCheck.DefenderPresent && endSquare.AttackerPresent)
                 {
                     //Attacker moved next to defender
+                    switch (dir)
+                    {
+                        case direction.FromAbove:
+                            squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column);
+                            break;
+                        case direction.FromBelow:
+                            squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
+                            break;
+                        case direction.FromLeft:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
+                            break;
+                        case direction.FromRight:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
+                            break;
+                    }
+                    if (squareTwoAway != null)
+                    {
+                        if (squareTwoAway.AttackerPresent || squareTwoAway.SquareType == Square.square_type.Corner)
+                        {
+                            squareToCheck.Occupation = Square.occupation_type.Empty;
+                        }
+                    }
                 }
             }
         }
@@ -124,11 +165,25 @@ namespace Tafl.Model
             }
 
             //Check DOWN 1 ROW
-        
+            squareToCheck = GetSquare(endSquare.Row + 1, endSquare.Column);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromAbove);
+            }
+
             //Check LEFT 1 COLUMN
+            squareToCheck = GetSquare(endSquare.Row, endSquare.Column -1);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromRight);
+            }
 
             //Check RIGHT 1 COLUMN
-
+            squareToCheck = GetSquare(endSquare.Row, endSquare.Column + 1);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromLeft);
+            }
 
         }
 
