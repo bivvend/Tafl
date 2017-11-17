@@ -21,6 +21,7 @@ namespace Tafl.Model
             Attacker, Defender, VictoryDefender, VictoryAttacker
         };
 
+
         
     }
 }

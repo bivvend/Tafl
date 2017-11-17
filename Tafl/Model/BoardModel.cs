@@ -57,10 +57,31 @@ namespace Tafl.Model
 
         public bool CheckForAttackerVictory()
         {
+            //Check to see if King is surrounded on 4 sides
+            Square kingSquare = null;
+            List<Square> squaresFound = board.Where((item) => item.KingPresent).ToList();
+            if (squaresFound.Count > 0)
+            {
+                kingSquare= squaresFound[0];
+            }
+            if (kingSquare == null)
+                return false;
+            Square up = GetSquare(kingSquare.Row - 1, kingSquare.Column);
+            Square down = GetSquare(kingSquare.Row + 1, kingSquare.Column);
+            Square left = GetSquare(kingSquare.Row, kingSquare.Column - 1);
+            Square right = GetSquare(kingSquare.Row, kingSquare.Column + 1);
+
+            if(up!=null && down!=null && left!=null && right!=null)
+            {
+                if( (up.AttackerPresent || up.SquareType == Square.square_type.Throne) && (down.AttackerPresent || down.SquareType == Square.square_type.Throne) && (left.AttackerPresent || left.SquareType == Square.square_type.Throne) && (right.AttackerPresent || right.SquareType == Square.square_type.Throne))
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
-
+    
         public bool MovePiece(int startRow, int startColumn,  int endRow, int endColumn)
         {
             Square startSquare = GetSquare(startRow, startColumn);

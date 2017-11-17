@@ -107,6 +107,8 @@ namespace Tafl.ViewModel
                                     }                                   
 
                                 });
+
+                                
                             }
 
                             //Next Turn
