@@ -54,6 +54,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AI\Move.cs" />
+    <Compile Include="AI\Piece.cs" />
     <Compile Include="Model\BoardModel.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Model\Square.cs" />
@@ -121,9 +123,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AI\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\bottom.bmp" />
     <Resource Include="Resources\corner-bl.bmp" />
