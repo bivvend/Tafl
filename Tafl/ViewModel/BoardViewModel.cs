@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Tafl.Model;
+using Tafl.AI;
 
 namespace Tafl.ViewModel 
 {
@@ -69,9 +70,10 @@ namespace Tafl.ViewModel
             EmptySquareClickCommand = new RelayCommand(EmptySquareClickExecute, param => true);
         }
 
-        public void EmptySquareClickExecute(object obj)
+        public async void EmptySquareClickExecute(object obj)
         {
-            int[] Coords = (int[])obj;           
+            int[] Coords = (int[])obj;
+            Move AIMove = new Move();
             foreach (Model.Square square in Board)
             {
                 if (square.Row == Coords[1] && square.Column == Coords[0])
@@ -115,10 +117,22 @@ namespace Tafl.ViewModel
                             if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
                             {
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Defender;
+                                if(GameVModel.DefenderIsAI)
+                                {
+
+                                    AIMove = await GameVModel.Game.RunAITurn(new SimpleBoard());
+                                    await ApplyAIMove(AIMove);
+
+                                }
                             }
                             else if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
                             {
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
+                                if(GameVModel.AttackerIsAI)
+                                {
+                                    AIMove = await GameVModel.Game.RunAITurn(new SimpleBoard());
+                                    await ApplyAIMove(AIMove);
+                                }
                             }
 
                         }
@@ -131,6 +145,21 @@ namespace Tafl.ViewModel
             }
         }
 
+        public async Task ApplyAIMove(Move aMove)
+        {
+            
+            if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
+            {
+                
+                GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
+            }
+            else if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
+            {
+
+                GameVModel.CurrentTurnState = GameModel.TurnState.Defender;
+            }
+
+        }
 
 
         public void SquareClickExecute(object obj)

@@ -56,6 +56,7 @@
     </ApplicationDefinition>
     <Compile Include="AI\Move.cs" />
     <Compile Include="AI\Piece.cs" />
+    <Compile Include="AI\SimpleBoard.cs" />
     <Compile Include="Model\BoardModel.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Model\Square.cs" />
