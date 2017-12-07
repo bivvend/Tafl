@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using Tafl.AI;
 
 namespace Tafl.Model
 {
@@ -209,6 +210,20 @@ namespace Tafl.Model
         }
 
 
+        public SimpleBoard GetSimpleBoard()
+        {
+            SimpleBoard simpleBoard = new SimpleBoard();
+            simpleBoard.SquareTypeArray = new Square.square_type[SizeX,SizeY];
+            simpleBoard.OccupationArray = new Square.occupation_type[SizeX, SizeY];
+
+            board.ToList().ForEach((item) =>
+            {
+                simpleBoard.SquareTypeArray[item.Column, item.Row] = item.SquareType;
+                simpleBoard.OccupationArray[item.Column, item.Row] = item.Occupation;
+            });
+
+            return simpleBoard;
+        }
 
         private Square GetSquare(int Row, int Column)
         {

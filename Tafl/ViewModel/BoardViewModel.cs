@@ -120,7 +120,7 @@ namespace Tafl.ViewModel
                                 if(GameVModel.DefenderIsAI)
                                 {
 
-                                    AIMove = await GameVModel.Game.RunAITurn(new SimpleBoard());
+                                    AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                     await ApplyAIMove(AIMove);
 
                                 }
@@ -130,7 +130,7 @@ namespace Tafl.ViewModel
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
                                 if(GameVModel.AttackerIsAI)
                                 {
-                                    AIMove = await GameVModel.Game.RunAITurn(new SimpleBoard());
+                                    AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                     await ApplyAIMove(AIMove);
                                 }
                             }
@@ -147,10 +147,26 @@ namespace Tafl.ViewModel
 
         public async Task ApplyAIMove(Move aMove)
         {
-            
-            if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
+
+            //Overlay the simple board onto the real board
+            int SizeX = aMove.board.OccupationArray.GetLength(0);
+            int SizeY = aMove.board.OccupationArray.GetLength(1);
+            Square aSquare = new Square();
+            for(int i=0; i<SizeY; i++) //Rows
             {
-                
+                for(int j=0; j<SizeX;j++) //Columns
+                {
+                    aSquare = GetSquare(i, j);
+                    if(aSquare!=null)
+                    {
+                        aSquare.Occupation = aMove.board.OccupationArray[j, i];
+                    }
+                }
+            }
+
+
+            if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
+            {  
                 GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
             }
             else if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
@@ -161,6 +177,7 @@ namespace Tafl.ViewModel
 
         }
 
+        
 
         public void SquareClickExecute(object obj)
         {

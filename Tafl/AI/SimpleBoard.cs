@@ -3,29 +3,192 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tafl.Model;
 
 namespace Tafl.AI
 {
     public class SimpleBoard  // Simple representation of a board used by AI calculations
     {
-        public enum Occupation
-        {
-            King, Defender, Attacker, Empty
-        };
 
-        public enum SquareType
-        {
-            Normal, Throne, AttackerStart, Corner, DefenderStart
-        };
+        public Square.occupation_type[,] OccupationArray { get; set; }
 
-
-        public Occupation[][] OccuptationArray { get; set; }
-
-        public SquareType[][] SquareTypeArray { get; set; }    // Will be used sparingly,  as all boards will take the same type array
+        public Square.square_type[,] SquareTypeArray { get; set; }    // Will be used sparingly,  as all boards will take the same type array
 
         public SimpleBoard()
         {
             
+        }
+
+        //Copy constructor
+        public SimpleBoard(SimpleBoard input)
+        {
+            int SizeX = input.OccupationArray.GetLength(0);
+            int SizeY = input.OccupationArray.GetLength(1);
+
+            Square.occupation_type[,] newOcc = new Square.occupation_type[SizeX, SizeY];
+            Square.square_type[,] newTypes = new Square.square_type[SizeX, SizeY];
+
+            for (int i = 0; i < SizeY; i++) //Rows
+            {
+                for (int j = 0; j < SizeX; j++) //Columns
+                {
+                    newOcc[j, i] = input.OccupationArray[j, i];
+                    newTypes[j, i] = input.SquareTypeArray[j, i];
+                }
+            }
+
+            this.OccupationArray = newOcc;
+            this.SquareTypeArray = newTypes;
+        }
+
+
+        public List<Move> GetPossibleMoves(GameModel.TurnState turnState)
+        {
+            List<Move> moveList = new List<Move>();
+            List<Piece> activePieces = new List<Piece>();
+
+            for (int i = 0; i < this.OccupationArray.GetLength(1); i++) // Rows
+            {
+                for (int j = 0; j < this.OccupationArray.GetLength(0); j++) //Columns
+                {
+                    if (turnState == GameModel.TurnState.Defender && (OccupationArray[j,i]== Square.occupation_type.Defender || OccupationArray[j, i] == Square.occupation_type.King))
+                    {
+                        if (OccupationArray[j, i] == Square.occupation_type.King)
+                            activePieces.Add(new Piece(j, i, Piece.PieceType.King));
+                        else
+                            activePieces.Add(new Piece(j, i, Piece.PieceType.Defender));
+
+                    }
+                    if (turnState == GameModel.TurnState.Attacker && OccupationArray[j, i] == Square.occupation_type.Attacker)
+                    {
+                        activePieces.Add(new Piece(j, i, Piece.PieceType.Attacker));
+                    }
+
+                }
+            }
+            activePieces.ForEach((p) =>
+            {
+                moveList.AddRange(GetMovesForPiece(p, null, 0));
+            });            
+
+            return moveList;
+        }
+
+        private List<Move> GetMovesForPiece(Piece p, Move parent, int depth)
+        {
+            List<Move> moveList = new List<Move>();
+            int startColumn = p.Column;
+            int startRow = p.Row;
+
+            //decrease column until zero. Stop when find occupied or zero
+
+            for (int N = startColumn - 1; N >= 0; N--)
+            {
+
+                if (OccupationArray[N,startRow] == Square.occupation_type.Empty && (SquareTypeArray[N,startRow] != Square.square_type.Corner || p.Type==Piece.PieceType.King))
+                {
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                    {
+                        moveList.Add(new Move(startColumn, startRow, N, startRow, parent, depth));
+                    }
+                    else
+                    {
+                        if (p.Type == Piece.PieceType.King)
+                        {
+                            moveList.Add(new Move(startColumn, startRow, N, startRow, parent, depth));
+                        }
+                    }
+                }
+                else
+                {
+                    //Don't break for Throne
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                        break;
+                }
+                
+            }
+
+            //increase column. Stop when find occupied or Full size
+
+            for (int N = startColumn + 1; N < OccupationArray.GetLength(0); N++)
+            {
+
+                if (OccupationArray[N, startRow] == Square.occupation_type.Empty && (SquareTypeArray[N, startRow] != Square.square_type.Corner || p.Type == Piece.PieceType.King))
+                {
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                    {
+                        moveList.Add(new Move(startColumn, startRow, N, startRow, parent, depth));
+                    }
+                    else
+                    {
+                        if (p.Type == Piece.PieceType.King)
+                        {
+                            moveList.Add(new Move(startColumn, startRow, N, startRow, parent, depth));
+                        }
+                    }
+                }
+                else
+                {
+                    //Don't break for Throne
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                        break;
+                }
+                
+            }
+
+            //increase row until zero. Stop when find occupied or Full size
+
+            for (int N = startRow + 1; N < OccupationArray.GetLength(1); N++)
+            {
+                if (OccupationArray[startColumn,N] == Square.occupation_type.Empty && (SquareTypeArray[startColumn,N] != Square.square_type.Corner || p.Type == Piece.PieceType.King))
+                {
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                    {
+                        moveList.Add(new Move(startColumn, startRow, startColumn, N, parent, depth));
+                    }
+                    else
+                    {
+                        if (p.Type == Piece.PieceType.King)
+                        {
+                            moveList.Add(new Move(startColumn, startRow, startColumn, N, parent, depth));
+                        }
+                    }
+                }
+                else
+                {
+                    //Don't break for Throne
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                        break;
+                }
+                
+            }
+
+            //decrease row until zero. Stop when find occupied or zero
+            for (int N = startRow - 1; N >= 0; N--)
+            {
+                if (OccupationArray[startColumn, N] == Square.occupation_type.Empty && (SquareTypeArray[startColumn, N] != Square.square_type.Corner || p.Type == Piece.PieceType.King))
+                {
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                    {
+                        moveList.Add(new Move(startColumn, startRow, startColumn, N, parent, depth));
+                    }
+                    else
+                    {
+                        if (p.Type == Piece.PieceType.King)
+                        {
+                            moveList.Add(new Move(startColumn, startRow, startColumn, N, parent, depth));
+                        }
+                    }
+                }
+                else
+                {
+                    //Don't break for Throne
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                        break;
+                }
+            }
+
+            return moveList;
         }
     }
 }

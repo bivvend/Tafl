@@ -78,11 +78,26 @@ namespace Tafl.Model
             this.BaseBoard = startBoard;
             Move suggetedMove = new Move();
 
-            await Task.Delay(4000);
+            List<Move> moveList = new List<Move>();
+            //Fill list with all possible moves of depth 0
+
+            moveList = BaseBoard.GetPossibleMoves(this.currentTurnState);
+
+            //Make the moves
+            moveList.ForEach((m) =>
+            {
+                m.MakeMove(m, BaseBoard);
+            });
+
+
+            //Pick the best
+            suggetedMove = moveList[0];
 
             return suggetedMove;
             
         }
+
+        
 
         
         
