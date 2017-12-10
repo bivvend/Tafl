@@ -231,7 +231,7 @@ namespace Tafl.ViewModel
             bool selectionMade = !squareToSelect.Selected;
             if(selectionMade)
             {
-                PieceInfoString = String.Format("Row {0} Column {0}", squareToSelect.Row, squareToSelect.Column);
+                PieceInfoString = String.Format("Row {0} Column {1}", squareToSelect.Row, squareToSelect.Column);
             }
             else
             {
