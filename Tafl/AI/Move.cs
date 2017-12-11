@@ -19,6 +19,9 @@ namespace Tafl.AI
 
         public double score { get; set; }
 
+        public int numberTakesDefender { get; set; }
+        public int numberTakesAttacker { get; set; }
+
         public SimpleBoard board { get; set; }  //Board associated with the move.  Represents the state before and then after the move is made
 
         public enum direction
@@ -35,6 +38,8 @@ namespace Tafl.AI
             parent = null;
             score = 0.0d;
             depth = 0;
+            numberTakesAttacker = 0;
+            numberTakesDefender = 0;
         }
 
         public Move(int iStartColumn, int iStartRow, int iEndColumn, int iEndRow, Move parentMove, int iDepth)
@@ -44,31 +49,11 @@ namespace Tafl.AI
             this.endColumn = iEndColumn;
             this.endRow = iEndRow;
             this.parent = parentMove;
-            this.depth = iDepth;            
-
+            this.depth = iDepth;
+            this.score = 0.0d;
+            this.numberTakesAttacker = 0;
+            this.numberTakesDefender = 0;
         }
-
-        //private void SetMoveDirection()
-        //{
-        //    if(this.endColumn > this.startColumn  && this.startRow == this.endRow)
-        //    {
-        //        this.MoveDirection = direction.FromLeft;
-        //    }
-        //    else if (this.endColumn < this.startColumn && this.startRow == this.endRow)
-        //    {
-        //        this.MoveDirection = direction.FromRight;
-        //    }
-        //    else if(this.endRow < this.startRow && this.endColumn == this.startColumn)
-        //    {
-        //        this.MoveDirection = direction.FromBelow;
-        //    }
-        //    else if (this.endRow > this.startRow && this.endColumn == this.startColumn)
-        //    {
-        //        this.MoveDirection = direction.FromAbove;
-        //    }
-
-        //}
-
 
 
         public override string ToString()
@@ -109,6 +94,15 @@ namespace Tafl.AI
         private SimpleSquare GetSquare(int row, int column)   //Need to be careful throughout as have a habit of swapping these.  Using row, column (y,x) here and in Check and process take
         {
             SimpleSquare retSquare = new SimpleSquare();
+
+            if(column >= board.OccupationArray.GetLength(0) || column<0 || row>= board.OccupationArray.GetLength(1) || row < 0)
+            {
+                return null;
+            }
+            retSquare.Occupation = board.OccupationArray[column, row];
+            retSquare.SquareType = board.SquareTypeArray[column, row];
+            retSquare.Row = row;
+            retSquare.Column = column;
             
             return retSquare;
 
@@ -116,97 +110,102 @@ namespace Tafl.AI
 
         private void CheckAndProcessTake()
         {
-            ////Check UP 1 ROW
-            //SimpleSquare squareToCheck = GetSquare(endSquare.Row - 1, endSquare.Column);
-            //if (squareToCheck != null) //Is a valid square
-            //{
-            //    SearchAroundForTake(squareToCheck, endSquare, direction.FromBelow);
-            //}
 
-            ////Check DOWN 1 ROW
-            //squareToCheck = GetSquare(endSquare.Row + 1, endSquare.Column);
-            //if (squareToCheck != null) //Is a valid square
-            //{
-            //    SearchAroundForTake(squareToCheck, endSquare, direction.FromAbove);
-            //}
+            SimpleSquare endSquare = GetSquare(this.endRow, this.endColumn);
+            //Check UP 1 ROW
+           
+            SimpleSquare squareToCheck = GetSquare(endSquare.Row - 1, endSquare.Column);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromBelow);
+            }
 
-            ////Check LEFT 1 COLUMN
-            //squareToCheck = GetSquare(endSquare.Row, endSquare.Column - 1);
-            //if (squareToCheck != null) //Is a valid square
-            //{
-            //    SearchAroundForTake(squareToCheck, endSquare, direction.FromRight);
-            //}
+            //Check DOWN 1 ROW
+            squareToCheck = GetSquare(endSquare.Row + 1, endSquare.Column);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromAbove);
+            }
 
-            ////Check RIGHT 1 COLUMN
-            //squareToCheck = GetSquare(endSquare.Row, endSquare.Column + 1);
-            //if (squareToCheck != null) //Is a valid square
-            //{
-            //    SearchAroundForTake(squareToCheck, endSquare, direction.FromLeft);
-            //}
+            //Check LEFT 1 COLUMN
+            squareToCheck = GetSquare(endSquare.Row, endSquare.Column - 1);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromRight);
+            }
+
+            //Check RIGHT 1 COLUMN
+            squareToCheck = GetSquare(endSquare.Row, endSquare.Column + 1);
+            if (squareToCheck != null) //Is a valid square
+            {
+                SearchAroundForTake(squareToCheck, endSquare, direction.FromLeft);
+            }
 
         }
 
         private void SearchAroundForTake(SimpleSquare squareToCheck, SimpleSquare endSquare, direction dir)
         {
-            ////squareToCheck is the square with the possible piece to be taken,  endSquare is the square into which the possible taker moved, direction is the direction that the taker moved w.r.t takee.
-            //Square squareTwoAway = null;
-            //if (squareToCheck.Occupation != Square.occupation_type.Empty) //Something in the square
-            //{
-            //    if (squareToCheck.AttackerPresent && (endSquare.KingPresent || endSquare.DefenderPresent))
-            //    {
-            //        //Defender or King moved next to Attacker
-            //        //Look 2 squares away in given direction for defender or King
-            //        switch (dir)
-            //        {
-            //            case direction.FromAbove:
-            //                squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column);
-            //                break;
-            //            case direction.FromBelow:
-            //                squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
-            //                break;
-            //            case direction.FromLeft:
-            //                squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
-            //                break;
-            //            case direction.FromRight:
-            //                squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
-            //                break;
-            //        }
-            //        if (squareTwoAway != null)
-            //        {
-            //            if (squareTwoAway.DefenderPresent || squareTwoAway.KingPresent || squareTwoAway.SquareType == Square.square_type.Corner)
-            //            {
-            //                squareToCheck.Occupation = Square.occupation_type.Empty;
-            //            }
-            //        }
+            //squareToCheck is the square with the possible piece to be taken,  endSquare is the square into which the possible taker moved, direction is the direction that the taker moved w.r.t takee.
+            SimpleSquare squareTwoAway = null;
+            if (squareToCheck.Occupation != Square.occupation_type.Empty) //Something in the square
+            {
+                if (squareToCheck.AttackerPresent && (endSquare.KingPresent || endSquare.DefenderPresent))
+                {
+                    //Defender or King moved next to Attacker
+                    //Look 2 squares away in given direction for defender or King
+                    switch (dir)
+                    {
+                        case direction.FromAbove:
+                            squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column);
+                            break;
+                        case direction.FromBelow:
+                            squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
+                            break;
+                        case direction.FromLeft:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
+                            break;
+                        case direction.FromRight:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
+                            break;
+                    }
+                    if (squareTwoAway != null)
+                    {
+                        if (squareTwoAway.DefenderPresent || squareTwoAway.KingPresent || squareTwoAway.SquareType == Square.square_type.Corner)
+                        {
+                            board.OccupationArray[squareToCheck.Column, squareToCheck.Row] = Square.occupation_type.Empty;
+                            numberTakesDefender++;
+                        }
+                    }
 
-            //    }
-            //    if (squareToCheck.DefenderPresent && endSquare.AttackerPresent)
-            //    {
-            //        //Attacker moved next to defender
-            //        switch (dir)
-            //        {
-            //            case direction.FromAbove:
-            //                squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column);
-            //                break;
-            //            case direction.FromBelow:
-            //                squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
-            //                break;
-            //            case direction.FromLeft:
-            //                squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
-            //                break;
-            //            case direction.FromRight:
-            //                squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
-            //                break;
-            //        }
-            //        if (squareTwoAway != null)
-            //        {
-            //            if (squareTwoAway.AttackerPresent || squareTwoAway.SquareType == Square.square_type.Corner)
-            //            {
-            //                squareToCheck.Occupation = Square.occupation_type.Empty;
-            //            }
-            //        }
-            //    }
-            //}
+                }
+                if (squareToCheck.DefenderPresent && endSquare.AttackerPresent)
+                {
+                    //Attacker moved next to defender
+                    switch (dir)
+                    {
+                        case direction.FromAbove:
+                            squareTwoAway = GetSquare(endSquare.Row + 2, endSquare.Column);
+                            break;
+                        case direction.FromBelow:
+                            squareTwoAway = GetSquare(endSquare.Row - 2, endSquare.Column);
+                            break;
+                        case direction.FromLeft:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column + 2);
+                            break;
+                        case direction.FromRight:
+                            squareTwoAway = GetSquare(endSquare.Row, endSquare.Column - 2);
+                            break;
+                    }
+                    if (squareTwoAway != null)
+                    {
+                        if (squareTwoAway.AttackerPresent || squareTwoAway.SquareType == Square.square_type.Corner)
+                        {
+                            board.OccupationArray[squareToCheck.Column, squareToCheck.Row] = Square.occupation_type.Empty;
+                            numberTakesAttacker++;
+                        }
+                    }
+                }
+            }
         }
 
 

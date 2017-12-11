@@ -74,6 +74,7 @@ namespace Tafl.ViewModel
         {
             int[] Coords = (int[])obj;
             Move AIMove = new Move();
+            bool moveMade = false;
             foreach (Model.Square square in Board)
             {
                 if (square.Row == Coords[1] && square.Column == Coords[0])
@@ -114,14 +115,18 @@ namespace Tafl.ViewModel
                             }
 
                             //Next Turn
+                            moveMade = true;
                             if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
                             {
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Defender;
                                 if(GameVModel.DefenderIsAI)
                                 {
 
-                                    AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
-                                    await ApplyAIMove(AIMove);
+                                    await Task.Run(async () =>
+                                    {
+                                        AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        await ApplyAIMove(AIMove);
+                                    });
 
                                 }
                             }
@@ -130,8 +135,13 @@ namespace Tafl.ViewModel
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
                                 if(GameVModel.AttackerIsAI)
                                 {
-                                    AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
-                                    await ApplyAIMove(AIMove);
+                                    //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                    //await ApplyAIMove(AIMove);
+                                    await Task.Run(async () =>
+                                    {
+                                        AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        await ApplyAIMove(AIMove);
+                                    });
                                 }
                             }
 

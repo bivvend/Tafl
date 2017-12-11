@@ -42,7 +42,7 @@ namespace Tafl.AI
         }
 
 
-        public List<Move> GetPossibleMoves(GameModel.TurnState turnState)
+        public List<Move> GetPossibleMoves(GameModel.TurnState turnState, Move parent, int depth)
         {
             List<Move> moveList = new List<Move>();
             List<Piece> activePieces = new List<Piece>();
@@ -68,7 +68,7 @@ namespace Tafl.AI
             }
             activePieces.ForEach((p) =>
             {
-                moveList.AddRange(GetMovesForPiece(p, null, 0));
+                moveList.AddRange(GetMovesForPiece(p, parent, depth));
             });            
 
             return moveList;

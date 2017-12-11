@@ -105,23 +105,6 @@ namespace Tafl.AI
         }
 
 
-
-
-        private string imageName;
-        public string ImageName
-        {
-            get
-            {
-                return imageName;
-            }
-            set
-            {
-                imageName = value;                
-            }
-
-        }
-
-
         private int row;
         public int Row
         {
@@ -169,7 +152,7 @@ namespace Tafl.AI
 
         public SimpleSquare()
         {
-
+            this.Coords = new int[] { 0, 0 };
         }
 
         public SimpleSquare(int _column, int _row, Square.occupation_type _occupancy_type, Square.square_type _square_type)

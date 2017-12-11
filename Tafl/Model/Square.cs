@@ -248,6 +248,8 @@ namespace Tafl.Model
                 this.BareTileType = bare_tile_type.tile4;
             Highlighted = false;
             Selected = false;
+
+            this.Coords = new int[] { 0, 0 };
         }
 
         public Square( int _column, int _row, occupation_type _occupancy_type, square_type _square_type)
