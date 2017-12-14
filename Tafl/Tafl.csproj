@@ -54,8 +54,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AI\Assassin.cs" />
+    <Compile Include="AI\General.cs" />
+    <Compile Include="AI\KingsCouncil.cs" />
     <Compile Include="AI\Move.cs" />
     <Compile Include="AI\Piece.cs" />
+    <Compile Include="AI\Sage.cs" />
     <Compile Include="AI\SimpleBoard.cs" />
     <Compile Include="AI\SimpleSquare.cs" />
     <Compile Include="Model\BoardModel.cs" />
@@ -63,6 +67,7 @@
     <Compile Include="Model\Square.cs" />
     <Compile Include="ViewModel\BoardViewModel.cs" />
     <Compile Include="ViewModel\GameViewModel.cs" />
+    <Compile Include="ViewModel\MoveViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="Views\BoardView.xaml.cs">
       <DependentUpon>BoardView.xaml</DependentUpon>

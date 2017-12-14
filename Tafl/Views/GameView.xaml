@@ -8,18 +8,34 @@
              d:DesignHeight="300" d:DesignWidth="300">
         <Grid Grid.RowSpan="3">
             <Grid.RowDefinitions>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
                 <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" Command="{Binding NewBoardCommand}">New Board</Button>
+            <Button Grid.Column="0" Grid.Row="0" Command="{Binding NewBoardCommand}" Margin="5">New Board</Button>
             <StackPanel Grid.Column="0" Grid.Row="1">
                 <CheckBox Name="CheckBoxAIAttacker" IsChecked="{Binding AttackerIsAI}">AI is Attacker?</CheckBox>
                 <CheckBox Name="CheckBoxAIDefender" IsChecked="{Binding DefenderIsAI}">AI is Defender?</CheckBox>
+                <CheckBox Name="CheckBoxPauseAI" IsChecked="{Binding PauseAfterAITurn}">Pause after AI turn?</CheckBox>
             </StackPanel>
         <Label Name="LabelCurrentTurn" Grid.Row="2" Content="{Binding CurrentTurnState}"></Label>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label>Best Moves</Label>
+                <ComboBox MinWidth="200" ItemsSource="{Binding MoveList}" DisplayMemberPath="Details"></ComboBox>
+            </WrapPanel>
+        </Grid>
     </Grid>
 </UserControl>

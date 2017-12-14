@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,8 +8,9 @@ using Tafl.Model;
 
 namespace Tafl.AI
 {
-    public class Move
+    public class Move 
     {
+        
         public int startColumn { get; set; }
         public int startRow { get; set; }
         public int endColumn { get; set; }
@@ -17,10 +19,16 @@ namespace Tafl.AI
         public Move parent { get; set; }
         public int depth { get; set; }
 
-        public double score { get; set; }
+        public double scoreSage { get; set; }
+        public double scoreAssassin { get; set; }
+        public double scoreGeneral { get; set; }
+        public double scoreKingsCouncil { get; set; }
 
         public int numberTakesDefender { get; set; }
+        public List<int> numberTakesDefenderAtDepth { get; set; } //Used on main parent move to evalute danger/success profile
+
         public int numberTakesAttacker { get; set; }
+        public List<int> numberTakesAttackerAtDepth { get; set; } ////Used on main parent move to evalute danger/success profile
 
         public SimpleBoard board { get; set; }  //Board associated with the move.  Represents the state before and then after the move is made
 
@@ -36,10 +44,16 @@ namespace Tafl.AI
             this.endColumn = 0;
             this.endRow = 0;
             parent = null;
-            score = 0.0d;
+            scoreSage = 0.0d;
+            scoreAssassin = 0.0d;
+            scoreGeneral = 0.0d;
+            scoreKingsCouncil = 0.0d;
             depth = 0;
             numberTakesAttacker = 0;
             numberTakesDefender = 0;
+
+            numberTakesAttackerAtDepth = new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            numberTakesDefenderAtDepth = new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
         public Move(int iStartColumn, int iStartRow, int iEndColumn, int iEndRow, Move parentMove, int iDepth)
@@ -50,15 +64,21 @@ namespace Tafl.AI
             this.endRow = iEndRow;
             this.parent = parentMove;
             this.depth = iDepth;
-            this.score = 0.0d;
+            scoreSage = 0.0d;
+            scoreAssassin = 0.0d;
+            scoreGeneral = 0.0d;
+            scoreKingsCouncil = 0.0d;
             this.numberTakesAttacker = 0;
             this.numberTakesDefender = 0;
+
+            numberTakesAttackerAtDepth = new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            numberTakesDefenderAtDepth = new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
 
         public override string ToString()
         {
-            return this.startColumn.ToString() + "," + this.startRow.ToString() + " To " + this.endColumn.ToString() + "," + this.endRow.ToString() + "(" + this.score.ToString("0.0000") + ")";
+            return this.startColumn.ToString() + "," + this.startRow.ToString() + " To " + this.endColumn.ToString() + "," + this.endRow.ToString() + " (" + this.scoreSage.ToString("0.0000") + ")";
         }
 
         /// <summary>

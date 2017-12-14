@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Tafl.AI;
+using Tafl.ViewModel;
 
 namespace Tafl.Model
 {
@@ -66,12 +69,36 @@ namespace Tafl.Model
             }
         }
 
+        private bool pauseAfterAITurn;
+        public bool PauseAfterAITurn
+        {
+            get
+            {
+                return pauseAfterAITurn;
+            }
+            set
+            {
+
+                pauseAfterAITurn = value;
+            }
+        }
 
         public enum TurnState
         {
             Attacker, Defender, VictoryDefender, VictoryAttacker, Resetting
         };
 
+        public ObservableCollection<MoveViewModel> MoveViewModelList;
+
+        public GameModel()
+        {
+            MoveViewModelList = new ObservableCollection<MoveViewModel>();
+        }
+
+        private async void InvokeAction (Action a)
+        {
+            await Application.Current.Dispatcher.BeginInvoke(a);
+        }
 
         public async Task<Move> RunAITurn(SimpleBoard startBoard)
         {
@@ -79,6 +106,9 @@ namespace Tafl.Model
             Move suggetedMove = new Move();
 
             List<List<Move>> moveList = new List<List<Move>>();
+            InvokeAction(new Action(() => MoveViewModelList.Clear()));
+            
+
             
             //Fill list with all possible moves of depth 0
             
@@ -133,14 +163,31 @@ namespace Tafl.Model
 
 
             //Propagate scores
-            for (int i = moveList.Count-1; i>0; i--)
+            for (int i = moveList.Count-1; i>=0; i--)
             {
+
+
                 moveList[i].ForEach((item) =>                
                 {
-                    item.parent.numberTakesAttacker += item.numberTakesAttacker;
-                    item.parent.numberTakesDefender += item.numberTakesDefender;
-                    item.parent.score += item.score;
-                });
+                    if (i != 0)
+                    {
+                        //Total number of takes in the pipeline downwards
+                        if (item.numberTakesAttacker > 0 || item.numberTakesDefender > 0)
+                        {
+                            item.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                            item.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                        }
+                    }
+                    else
+                    {
+                        item.numberTakesAttackerAtDepth[0] = item.numberTakesAttacker;
+                        item.numberTakesDefenderAtDepth[0] = item.numberTakesDefender;
+                    }
+
+                    
+                    
+                });               
+
             }
 
 
@@ -149,11 +196,14 @@ namespace Tafl.Model
             //Pick the best
             if (currentTurnState == TurnState.Defender)
             {
-                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesDefender);
+                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesDefenderAtDepth[0] * 10.0 - item.numberTakesAttackerAtDepth[1]);
+                InvokeAction( new Action(() =>MoveViewModelList.Add(new MoveViewModel(suggetedMove))));
+                
             }
             else if(currentTurnState == TurnState.Attacker)
             {
-                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesAttacker);
+                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[0] * 10.0 - item.numberTakesDefenderAtDepth[1]);
+                InvokeAction(new Action(() => MoveViewModelList.Add(new MoveViewModel(suggetedMove))));
             }
 
             return suggetedMove;

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Tafl.AI;
 
 namespace Tafl.ViewModel
 {
-    public class GameViewModel:INotifyPropertyChanged
+    public class GameViewModel : INotifyPropertyChanged
     {
-         
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string propertyName)
@@ -31,7 +32,7 @@ namespace Tafl.ViewModel
             }
             set
             {
-                gameModel = value;                
+                gameModel = value;
             }
 
         }
@@ -51,6 +52,38 @@ namespace Tafl.ViewModel
 
         }
 
+        private ObservableCollection<MoveViewModel> moveList;
+        public ObservableCollection<MoveViewModel> MoveList
+        {
+            get
+            {
+                return moveList;
+            }
+            set
+            {
+                moveList = value;
+                RaisePropertyChanged("MoveList");
+
+            }
+
+        }
+
+
+        private bool pauseAfterAITurn;
+        public bool PauseAfterAITurn
+        {
+             get
+            {
+                return Game.PauseAfterAITurn;
+            }
+            set
+            {
+
+                Game.PauseAfterAITurn = value;
+                pauseAfterAITurn = value;
+                RaisePropertyChanged("PauseAfterAITurn");
+            }
+        }
 
         private Model.GameModel.TurnState currentTurnState;
         public Model.GameModel.TurnState CurrentTurnState
@@ -98,6 +131,7 @@ namespace Tafl.ViewModel
             }
         }
 
+
         public ICommand NewBoardCommand
         {
             get;
@@ -109,6 +143,7 @@ namespace Tafl.ViewModel
 
             Board = boardModel;
             Game = gameModel;
+            MoveList = Game.MoveViewModelList;
             //Attach commands to relays
             NewBoardCommand = new RelayCommand(NewBoardExecute, param => true);
         }        

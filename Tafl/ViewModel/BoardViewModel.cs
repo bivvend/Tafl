@@ -58,12 +58,13 @@ namespace Tafl.ViewModel
         public ICommand SquareClickCommand { get; private set; }
         public ICommand EmptySquareClickCommand { get; private set; }
 
-        public BoardViewModel(Model.BoardModel boardModel, GameViewModel gameViewModel)
+        public BoardViewModel(Model.BoardModel boardModel, GameViewModel gameViewModel, GameModel game)
         {
             BoardSetup = boardModel;
             GameVModel = gameViewModel;            
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
+            Game = game;
 
             //SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
             SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
@@ -157,6 +158,10 @@ namespace Tafl.ViewModel
 
         public async Task ApplyAIMove(Move aMove)
         {
+            while(Game.PauseAfterAITurn)
+            {
+                Task.Delay(10);
+            }
 
             //Overlay the simple board onto the real board
             int SizeX = aMove.board.OccupationArray.GetLength(0);

@@ -35,7 +35,7 @@ namespace Tafl
             MainGameModel = new Model.GameModel();
 
             MainGameViewModel = new ViewModel.GameViewModel(MainBoardModel, MainGameModel);
-            MainBoardViewModel = new ViewModel.BoardViewModel(MainBoardModel, MainGameViewModel);
+            MainBoardViewModel = new ViewModel.BoardViewModel(MainBoardModel, MainGameViewModel, MainGameModel);
             
             MainBoardView.DataContext = MainBoardViewModel;
             MainGameView.DataContext = MainGameViewModel;
