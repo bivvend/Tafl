@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AI\Assassin.cs" />
+    <Compile Include="AI\EnumerableExtensions.cs" />
     <Compile Include="AI\General.cs" />
     <Compile Include="AI\KingsCouncil.cs" />
     <Compile Include="AI\Move.cs" />

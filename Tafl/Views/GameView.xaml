@@ -34,7 +34,7 @@
             </Grid.RowDefinitions>
             <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label>Best Moves</Label>
-                <ComboBox MinWidth="200" ItemsSource="{Binding MoveList}" DisplayMemberPath="Details"></ComboBox>
+                <ComboBox MinWidth="200" ItemsSource="{Binding MoveList}" DisplayMemberPath="Details" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"></ComboBox>
             </WrapPanel>
         </Grid>
     </Grid>

@@ -13,6 +13,20 @@ namespace Tafl.Model
 {
     public class GameModel
     {
+        private Sage sage;
+        public Sage Sage   //Sage evalutes the move tree
+        {
+            get
+            {
+                return sage;
+            }
+            set
+            {
+                sage = value;
+            }
+        }
+        
+
 
         private SimpleBoard baseBoard;
         public SimpleBoard BaseBoard
@@ -93,6 +107,7 @@ namespace Tafl.Model
         public GameModel()
         {
             MoveViewModelList = new ObservableCollection<MoveViewModel>();
+            Sage = new Sage();
         }
 
         private async void InvokeAction (Action a)
@@ -166,7 +181,7 @@ namespace Tafl.Model
             for (int i = moveList.Count-1; i>=0; i--)
             {
 
-
+                //Push all the data to the depth 0 moves
                 moveList[i].ForEach((item) =>                
                 {
                     if (i != 0)
@@ -183,30 +198,27 @@ namespace Tafl.Model
                         item.numberTakesAttackerAtDepth[0] = item.numberTakesAttacker;
                         item.numberTakesDefenderAtDepth[0] = item.numberTakesDefender;
                     }
-
                     
                     
                 });               
 
             }
 
+            Sage.ProcessMoves(moveList, currentTurnState);
 
-            
 
-            //Pick the best
-            if (currentTurnState == TurnState.Defender)
+            InvokeAction(new Action(() =>
             {
-                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesDefenderAtDepth[0] * 10.0 - item.numberTakesAttackerAtDepth[1]);
-                InvokeAction( new Action(() =>MoveViewModelList.Add(new MoveViewModel(suggetedMove))));
+                Sage.bestList.ForEach((item) =>
+                {
+                    MoveViewModelList.Add(new MoveViewModel(item));
+                });
                 
-            }
-            else if(currentTurnState == TurnState.Attacker)
-            {
-                suggetedMove = moveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[0] * 10.0 - item.numberTakesDefenderAtDepth[1]);
-                InvokeAction(new Action(() => MoveViewModelList.Add(new MoveViewModel(suggetedMove))));
-            }
+            }));
 
-            return suggetedMove;
+
+
+            return Sage.suggestedMove;
             
         }
 
@@ -216,35 +228,5 @@ namespace Tafl.Model
         
     }
 
-    static class EnumerableExtensions   // Used to efficiently find the item in a list with a maximum value
-    {
-        public static T MaxObject<T, U>(this IEnumerable<T> source, Func<T, U> selector)
-          where U : IComparable<U>
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            bool first = true;
-            T maxObj = default(T);
-            U maxKey = default(U);
-            foreach (var item in source)
-            {
-                if (first)
-                {
-                    maxObj = item;
-                    maxKey = selector(maxObj);
-                    first = false;
-                }
-                else
-                {
-                    U currentKey = selector(item);
-                    if (currentKey.CompareTo(maxKey) > 0)
-                    {
-                        maxKey = currentKey;
-                        maxObj = item;
-                    }
-                }
-            }
-            if (first) throw new InvalidOperationException("Sequence is empty.");
-            return maxObj;
-        }
-    }
+    
 }
