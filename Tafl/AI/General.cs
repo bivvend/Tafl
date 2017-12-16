@@ -16,27 +16,63 @@ namespace Tafl.AI
         public List<Move> Evaluate(List<List<Move>> inputMoveList, TurnState currentTurnState)
         {
             List<Move> suggestedMoves = new List<Move>();
-            if(currentTurnState == TurnState.Defender)
-            {
-                Move TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[1]);
-            }
+            
+            //Get some scaling constants
+
+            Move TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesDefenderAtDepth[2]);
+            double maxDefenderTakeDepth2 = (double)TestMove.numberTakesDefenderAtDepth[2];
+
+            TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesDefenderAtDepth[1]);
+            double maxDefenderTakeDepth1 = (double)TestMove.numberTakesDefenderAtDepth[1];
+
+            TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesDefenderAtDepth[0]);
+            double maxDefenderTakeDepth0 = (double)TestMove.numberTakesDefenderAtDepth[0];
+
+            TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[2]);
+            double maxAttackerTakeDepth2 = (double)TestMove.numberTakesAttackerAtDepth[2];
+
+            TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[1]);
+            double maxAttackerTakeDepth1 = (double)TestMove.numberTakesAttackerAtDepth[1];
+
+            TestMove = inputMoveList[0].MaxObject((item) => item.numberTakesAttackerAtDepth[0]);
+            double maxAttackerTakeDepth0 = (double)TestMove.numberTakesAttackerAtDepth[0];
+
+            //ensure no div by zero
+            if (maxDefenderTakeDepth0 <1.0)
+                maxDefenderTakeDepth0 = 1.0;
+
+            if (maxDefenderTakeDepth1 < 1.0)
+                maxDefenderTakeDepth1 = 1.0;
+
+            if (maxDefenderTakeDepth2 < 1.0)
+                maxDefenderTakeDepth2 = 1.0;
+
+            //ensure no div by zero
+            if (maxAttackerTakeDepth0 < 1.0)
+                maxAttackerTakeDepth0 = 1.0;
+
+            if (maxAttackerTakeDepth1 < 1.0)
+                maxAttackerTakeDepth1 = 1.0;
+
+            if (maxAttackerTakeDepth2 < 1.0)
+                maxAttackerTakeDepth2 = 1.0;
 
             //Pick the best
             if (currentTurnState == TurnState.Defender)
             {
-                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesDefenderAtDepth[0] * 10.0 - (double)item.numberTakesAttackerAtDepth[1] + (double)item.numberTakesDefenderAtDepth[2] * 0.001));
+                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesDefenderAtDepth[0] * (10.0/(maxDefenderTakeDepth0)) - (double)item.numberTakesAttackerAtDepth[1] * (2.0/maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2]* (1.0/maxDefenderTakeDepth2)));
                 suggestedMoves.ForEach((item) =>
                 {
-                    item.scoreGeneral = (double)item.numberTakesDefenderAtDepth[0] * 10.0 - (double)item.numberTakesAttackerAtDepth[1] + (double)item.numberTakesDefenderAtDepth[2] * 0.001;
+                    item.scoreGeneral = (double)item.numberTakesDefenderAtDepth[0] * (10.0 / maxDefenderTakeDepth0) - (double)item.numberTakesAttackerAtDepth[1] * (2.0 / maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2] * (1.0 / maxDefenderTakeDepth2);
                 });
 
             }
             else if (currentTurnState == TurnState.Attacker)
             {
-                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesAttackerAtDepth[0] * 10.0 - (double)item.numberTakesDefenderAtDepth[1] + (double)item.numberTakesAttackerAtDepth[2] * 0.001));
+                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesAttackerAtDepth[0] * (10.0/maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] *(2.0/maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2]*(1.0/maxAttackerTakeDepth2)));
                 suggestedMoves.ForEach((item) =>
                 {
-                    item.scoreGeneral = (double)item.numberTakesAttackerAtDepth[0] * 10.0 - (double)item.numberTakesDefenderAtDepth[1] + (double)item.numberTakesAttackerAtDepth[2] * 0.001;
+                    item.scoreGeneral = (double)item.numberTakesAttackerAtDepth[0] * (10.0 / maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] * (2.0 / maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2] * (1.0 / maxAttackerTakeDepth2);
 
                 });
             }

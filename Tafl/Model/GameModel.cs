@@ -189,8 +189,16 @@ namespace Tafl.Model
                         //Total number of takes in the pipeline downwards
                         if (item.numberTakesAttacker > 0 || item.numberTakesDefender > 0)
                         {
-                            item.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
-                            item.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                            if (i == 1)
+                            {
+                                item.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                                item.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                            }
+                            if (i == 2)
+                            {
+                                item.parent.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                                item.parent.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                            }
                         }
                     }
                     else
