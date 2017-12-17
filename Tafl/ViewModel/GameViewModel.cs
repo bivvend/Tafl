@@ -131,6 +131,19 @@ namespace Tafl.ViewModel
             }
         }
 
+        private bool thinking;
+        public bool Thinking
+        {
+            get
+            {
+                return thinking;
+            }
+            set
+            {
+                thinking = value;
+                RaisePropertyChanged("Thinking");
+            }
+        }
 
         public ICommand NewBoardCommand
         {

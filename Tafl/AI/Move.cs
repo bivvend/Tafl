@@ -111,7 +111,7 @@ namespace Tafl.AI
 
         }
 
-        private SimpleSquare GetSquare(int row, int column)   //Need to be careful throughout as have a habit of swapping these.  Using row, column (y,x) here and in Check and process take
+        public SimpleSquare GetSquare(int row, int column)   //Need to be careful throughout as have a habit of swapping these.  Using row, column (y,x) here and in Check and process take
         {
             SimpleSquare retSquare = new SimpleSquare();
 
@@ -161,6 +161,26 @@ namespace Tafl.AI
                 SearchAroundForTake(squareToCheck, endSquare, direction.FromLeft);
             }
 
+        }
+
+        public SimpleSquare FindTheKing(SimpleBoard board)
+        {
+            SimpleSquare kingSquare = null;
+            for(int i=0; i< board.OccupationArray.GetLength(0); i++) //Rows
+            {
+                for (int j = 0; j < board.OccupationArray.GetLength(1); j++) //Columns
+                {
+                    if(board.OccupationArray[j,i] == Square.occupation_type.King)
+                    {
+                        kingSquare = new SimpleSquare(j, i, Square.occupation_type.King, board.SquareTypeArray[j, i]);
+                        return kingSquare;
+                    }
+
+                }
+            }
+
+
+            return kingSquare;
         }
 
         private void SearchAroundForTake(SimpleSquare squareToCheck, SimpleSquare endSquare, direction dir)

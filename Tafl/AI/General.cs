@@ -9,9 +9,20 @@ namespace Tafl.AI
 {
     /// <summary>
     /// Class look to weigh up piece advantages by likely hood of takes
-    /// </summary>
+    /// </summary>    
+
     public class General
     {
+
+        public double desireToTakeWhenAttacker = 10.0;
+        public double desireToTakeWhenDefender = 10.0;
+
+        public double desireToAvoidTakeAttacker = 6.0;
+        public double desireToAvoidTakeDefender = 2.0;
+
+        public double desireToTakeWhenAttackerDepth2 = 1.0;
+        public double desireToTakeWhenDefenderDepth2 = 1.0;
+
 
         public List<Move> Evaluate(List<List<Move>> inputMoveList, TurnState currentTurnState)
         {
@@ -60,19 +71,19 @@ namespace Tafl.AI
             //Pick the best
             if (currentTurnState == TurnState.Defender)
             {
-                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesDefenderAtDepth[0] * (10.0/(maxDefenderTakeDepth0)) - (double)item.numberTakesAttackerAtDepth[1] * (2.0/maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2]* (1.0/maxDefenderTakeDepth2)));
+                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesDefenderAtDepth[0] * (desireToTakeWhenDefender/(maxDefenderTakeDepth0)) - (double)item.numberTakesAttackerAtDepth[1] * (desireToAvoidTakeDefender/maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2]* (desireToTakeWhenDefenderDepth2/maxDefenderTakeDepth2)));
                 suggestedMoves.ForEach((item) =>
                 {
-                    item.scoreGeneral = (double)item.numberTakesDefenderAtDepth[0] * (10.0 / maxDefenderTakeDepth0) - (double)item.numberTakesAttackerAtDepth[1] * (2.0 / maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2] * (1.0 / maxDefenderTakeDepth2);
+                    item.scoreGeneral = (double)item.numberTakesDefenderAtDepth[0] * (desireToTakeWhenDefender / maxDefenderTakeDepth0) - (double)item.numberTakesAttackerAtDepth[1] * (desireToAvoidTakeDefender/ maxAttackerTakeDepth1) + (double)item.numberTakesDefenderAtDepth[2] * (desireToTakeWhenDefenderDepth2/ maxDefenderTakeDepth2);
                 });
 
             }
             else if (currentTurnState == TurnState.Attacker)
             {
-                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesAttackerAtDepth[0] * (10.0/maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] *(2.0/maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2]*(1.0/maxAttackerTakeDepth2)));
+                suggestedMoves.Add(inputMoveList[0].MaxObject((item) => (double)item.numberTakesAttackerAtDepth[0] * (desireToTakeWhenAttacker/maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] *(desireToAvoidTakeAttacker/maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2]*(desireToTakeWhenAttackerDepth2/maxAttackerTakeDepth2)));
                 suggestedMoves.ForEach((item) =>
                 {
-                    item.scoreGeneral = (double)item.numberTakesAttackerAtDepth[0] * (10.0 / maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] * (2.0 / maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2] * (1.0 / maxAttackerTakeDepth2);
+                    item.scoreGeneral = (double)item.numberTakesAttackerAtDepth[0] * (desireToTakeWhenAttacker / maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] * (desireToAvoidTakeAttacker / maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2] * (desireToTakeWhenAttackerDepth2 / maxAttackerTakeDepth2);
 
                 });
             }

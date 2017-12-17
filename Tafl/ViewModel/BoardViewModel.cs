@@ -122,12 +122,13 @@ namespace Tafl.ViewModel
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Defender;
                                 if(GameVModel.DefenderIsAI)
                                 {
-
+                                    GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
                                         AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                     });
+                                    GameVModel.Thinking = false;
 
                                 }
                             }
@@ -136,13 +137,14 @@ namespace Tafl.ViewModel
                                 GameVModel.CurrentTurnState = GameModel.TurnState.Attacker;
                                 if(GameVModel.AttackerIsAI)
                                 {
-                                    //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
-                                    //await ApplyAIMove(AIMove);
+                                    
+                                    GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
                                         AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                     });
+                                    GameVModel.Thinking = false;
                                 }
                             }
 
@@ -290,13 +292,13 @@ namespace Tafl.ViewModel
                     }
                     else
                     {
-                        //Don't break for Throne
-                        if (aSquare.SquareType != Square.square_type.Throne)
+                        //Don't break for Throne unless it is occupied
+                        if (aSquare.SquareType != Square.square_type.Throne || aSquare.Occupation != Square.occupation_type.Empty)
                             break;
                     }
                 }
             }
-
+        
             //increase column. Stop when find occupied or Full size
 
             for (int N = startColumn + 1; N < BoardSetup.SizeX; N++)
@@ -321,7 +323,7 @@ namespace Tafl.ViewModel
                     else
                     {
                         //Don't break for Throne
-                        if (aSquare.SquareType != Square.square_type.Throne)
+                        if (aSquare.SquareType != Square.square_type.Throne || aSquare.Occupation != Square.occupation_type.Empty)
                             break;
                     }
                 }
@@ -351,7 +353,7 @@ namespace Tafl.ViewModel
                     else
                     {
                         //Don't break for Throne
-                        if (aSquare.SquareType != Square.square_type.Throne)
+                        if (aSquare.SquareType != Square.square_type.Throne || aSquare.Occupation != Square.occupation_type.Empty)
                             break;
                     }
                 }
@@ -380,7 +382,7 @@ namespace Tafl.ViewModel
                     else
                     {
                         //Don't break for Throne
-                        if (aSquare.SquareType != Square.square_type.Throne)
+                        if (aSquare.SquareType != Square.square_type.Throne || aSquare.Occupation != Square.occupation_type.Empty)
                             break;
                     }
                 }

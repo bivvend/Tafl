@@ -33,8 +33,8 @@ namespace Tafl.AI
             kingsCouncil = new KingsCouncil();
 
             weightAssassin = 0.0;
-            weightGeneral = 0.5;
-            weightKingsCouncil = 0.0;
+            weightGeneral = 1.0;
+            weightKingsCouncil = 1.0;
         }
 
         public void ProcessMoves(List<List<Move>> input, TurnState turnState)

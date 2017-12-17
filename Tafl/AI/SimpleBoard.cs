@@ -102,7 +102,7 @@ namespace Tafl.AI
                 else
                 {
                     //Don't break for Throne
-                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne || OccupationArray[N, startRow] != Square.occupation_type.Empty)
                         break;
                 }
                 
@@ -130,7 +130,7 @@ namespace Tafl.AI
                 else
                 {
                     //Don't break for Throne
-                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne)
+                    if (SquareTypeArray[N, startRow] != Square.square_type.Throne || OccupationArray[N, startRow] != Square.occupation_type.Empty)
                         break;
                 }
                 
@@ -157,7 +157,7 @@ namespace Tafl.AI
                 else
                 {
                     //Don't break for Throne
-                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne || OccupationArray[N, startRow] != Square.occupation_type.Empty)
                         break;
                 }
                 
@@ -183,7 +183,7 @@ namespace Tafl.AI
                 else
                 {
                     //Don't break for Throne
-                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne)
+                    if (SquareTypeArray[startColumn, N] != Square.square_type.Throne || OccupationArray[N, startRow] != Square.occupation_type.Empty)
                         break;
                 }
             }

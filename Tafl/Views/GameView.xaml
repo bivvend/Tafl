@@ -5,7 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tafl.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             Loaded="UserControl_Loaded">
+        <UserControl.Resources>
+            <!-- You can implement your own BooleanToVisibilityConverter but there is one already implemented. So the next line creates an instance of the BooleanToVisibilityConverter that you will be able to reference with the specified key -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </UserControl.Resources>
         <Grid Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"></RowDefinition>
@@ -13,7 +18,31 @@
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="4*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" Command="{Binding NewBoardCommand}" Margin="5">New Board</Button>
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>   
+                <Button  Command="{Binding NewBoardCommand}" Margin="5">New Board</Button>
+            <Image x:Name="image" Grid.Column="1" Visibility="{Binding Thinking, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    MaxWidth="50" MaxHeight="100" RenderTransformOrigin="0.5,0.5" Source="/Tafl;component/Resources/thinking.bmp">
+                <Image.RenderTransform>
+                    <RotateTransform x:Name="TransRotate" CenterX="0" CenterY="0" Angle="0" />
+                </Image.RenderTransform>
+                <Image.Resources>
+                    <Storyboard x:Key="spin">
+                        <DoubleAnimation x:Name="da" 
+                                Storyboard.TargetName="TransRotate" 
+                                Storyboard.TargetProperty="Angle"
+                                By="360" 
+                                Duration="0:1:40"  
+                                AutoReverse="False" 
+                                RepeatBehavior="Forever" />
+                    </Storyboard>
+                </Image.Resources>
+            </Image>
+        </Grid>
+            
             <StackPanel Grid.Column="0" Grid.Row="1">
                 <CheckBox Name="CheckBoxAIAttacker" IsChecked="{Binding AttackerIsAI}">AI is Attacker?</CheckBox>
                 <CheckBox Name="CheckBoxAIDefender" IsChecked="{Binding DefenderIsAI}">AI is Defender?</CheckBox>

@@ -151,7 +151,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\thinking.bmp" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\bottom.bmp" />
     <Resource Include="Resources\corner-bl.bmp" />

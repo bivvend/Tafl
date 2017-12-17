@@ -24,5 +24,7 @@ namespace Tafl.Views
         {
             InitializeComponent();
         }
+
+        
     }
 }
