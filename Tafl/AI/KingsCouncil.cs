@@ -18,6 +18,7 @@ namespace Tafl.AI
         public double desireToWin = 1000000000.0;
         public double desrieToWinDepth2 = 1000.0;
         public double desireForFreeKing = 0.1;
+        public double desireForKingToBeClearToCorner = 10.0;
 
         public List<Move> Evaluate(List<List<Move>> inputMoveList, TurnState currentTurnState)
         {
@@ -65,13 +66,10 @@ namespace Tafl.AI
                 List<Move> tempMoveList = new List<Move>();
                 List<Move> kingsMoveList = new List<Move>();
                 SimpleSquare kingSquare = new SimpleSquare();
+
                 if(numberDepth2Wins ==0)
-                {                  
-                    
-                    
-                    //Award moves that have the King more free to move
-
-
+                {
+                    //Award moves that have the King more free to move 
                     moveList[0].ForEach((item) =>
                     {
                         //Find the King
@@ -79,16 +77,22 @@ namespace Tafl.AI
 
                         tempMoveList = item.board.GetPossibleMoves(TurnState.Defender, null, 0);
 
-                        //filter the list based on mov
-                        
-                        kingsMoveList = tempMoveList.Where( move => move.startRow == kingSquare.Row && move.startColumn == kingSquare.Column).ToList();
+                        //filter the list based on moves of the king                        
+                        kingsMoveList = tempMoveList.Where(move => move.startRow == kingSquare.Row && move.startColumn == kingSquare.Column).ToList();
                         numMovesForKing = kingsMoveList.Count;
-                        item.scoreKingsCouncil += (double)numMovesForKing * desireForFreeKing;
+                        //Give a bonus for the king being freed up 
+                        item.scoreKingsCouncil += (double)numMovesForKing * desireForFreeKing;                   
                         
+
                     });
 
                 }
 
+                
+
+                       
+
+                
                 //return the best
                 suggestedMoves.Add(moveList[0].MaxObject((item) => item.scoreKingsCouncil));
             }

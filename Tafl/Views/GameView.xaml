@@ -44,8 +44,8 @@
         </Grid>
             
             <StackPanel Grid.Column="0" Grid.Row="1">
-                <CheckBox Name="CheckBoxAIAttacker" IsChecked="{Binding AttackerIsAI}">AI is Attacker?</CheckBox>
-                <CheckBox Name="CheckBoxAIDefender" IsChecked="{Binding DefenderIsAI}">AI is Defender?</CheckBox>
+            <CheckBox Name="CheckBoxAIAttacker" IsChecked="{Binding AttackerIsAI}" Command="{Binding AIAttackerSetChanged}" CommandParameter="{Binding IsChecked}">AI is Attacker?</CheckBox>
+            <CheckBox Name="CheckBoxAIDefender" IsChecked="{Binding DefenderIsAI}" Command="{Binding AIDefenderSetChanged}" CommandParameter="{Binding IsChecked}">AI is Defender?</CheckBox>
                 <CheckBox Name="CheckBoxPauseAI" IsChecked="{Binding PauseAfterAITurn}">Pause after AI turn?</CheckBox>
             </StackPanel>
         <Label Name="LabelCurrentTurn" Grid.Row="2" Content="{Binding CurrentTurnState}"></Label>

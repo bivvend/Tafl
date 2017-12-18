@@ -32,5 +32,10 @@ namespace Tafl.Views
             sb.Begin();
             sb.SetSpeedRatio(27);//sample data
         }
+
+        private void CheckBoxPauseAI_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

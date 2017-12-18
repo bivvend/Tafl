@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Tafl.AI;
+using Tafl.ViewModel;
 
 namespace Tafl.Model
 {
@@ -13,7 +14,6 @@ namespace Tafl.Model
     {
 
         public ObservableCollection<Model.Square> board;
-
 
         private int sizeX;
         public int SizeX

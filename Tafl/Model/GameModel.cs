@@ -115,6 +115,7 @@ namespace Tafl.Model
             await Application.Current.Dispatcher.BeginInvoke(a);
         }
 
+       
         public async Task<Move> RunAITurn(SimpleBoard startBoard)
         {
             this.BaseBoard = startBoard;

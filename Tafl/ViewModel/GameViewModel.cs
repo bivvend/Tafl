@@ -12,6 +12,7 @@ namespace Tafl.ViewModel
 {
     public class GameViewModel : INotifyPropertyChanged
     {
+        public BoardViewModel boardViewModel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -151,6 +152,23 @@ namespace Tafl.ViewModel
             internal set;
         }
 
+        public ICommand AIDefenderSetChanged
+        {
+            get;
+            internal set;
+        }
+
+
+
+        public ICommand AIAttackerSetChanged
+        {
+            get;
+            internal set;
+        }
+
+
+
+
         public GameViewModel(Model.BoardModel boardModel, Model.GameModel gameModel)
         {
 
@@ -159,6 +177,8 @@ namespace Tafl.ViewModel
             MoveList = Game.MoveViewModelList;
             //Attach commands to relays
             NewBoardCommand = new RelayCommand(NewBoardExecute, param => true);
+            AIDefenderSetChanged = new RelayCommand(AIDefenderSetChangedExecute, param => true);
+            AIAttackerSetChanged = new RelayCommand(AIAttackerSetChangedExecute, param => true);
         }        
 
 
@@ -168,6 +188,52 @@ namespace Tafl.ViewModel
         {
             Board.CreateBoard();
             CurrentTurnState = Model.GameModel.TurnState.Attacker;
+        }
+
+        public void AIDefenderSetChangedExecute(object obj)
+        {
+            if (DefenderIsAI && CurrentTurnState == Model.GameModel.TurnState.Defender)
+            {
+                //Start AI
+                StartAI();
+            }
+        }
+
+        public void AIAttackerSetChangedExecute(object obj)
+        {
+            if (AttackerIsAI && CurrentTurnState == Model.GameModel.TurnState.Attacker)
+            {
+                //Start AI
+                StartAI();
+            }
+        }
+
+
+
+        public async void StartAI()
+        {
+            Thinking = true;
+            Move AIMove = new Move();
+            await Task.Run(async () =>
+            {
+                AIMove = await Game.RunAITurn(Board.GetSimpleBoard());
+                await boardViewModel.ApplyAIMove(AIMove);
+            });
+            Thinking = false;
+
+            //Start next turn
+
+            if(currentTurnState == Model.GameModel.TurnState.Attacker && AttackerIsAI)
+            {
+                StartAI();
+            }
+
+            if (currentTurnState == Model.GameModel.TurnState.Defender && DefenderIsAI)
+            {
+                StartAI();
+            }
+
+
         }
     }
 
