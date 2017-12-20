@@ -32,7 +32,7 @@ namespace Tafl.AI
             assassin = new Assassin();
             kingsCouncil = new KingsCouncil();
 
-            weightAssassin = 0.0;
+            weightAssassin = 1.0;
             weightGeneral = 1.0;
             weightKingsCouncil = 1.0;
         }

@@ -86,6 +86,27 @@ namespace Tafl.AI
 
                     });
 
+                    //Look for routes for the king at depth 3 to get to corner
+                    int sizeX = moveList[0][0].board.OccupationArray.GetLength(0) -1;
+                    int sizeY = moveList[0][0].board.OccupationArray.GetLength(1) -1;
+                    moveList[2].ForEach(item =>
+                    {
+                        
+                        kingSquare = item.FindTheKing(item.board);
+                        Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
+                        kingsMoveList = item.board.GetMovesForPiece(king, item, 3);
+                        kingsMoveList = kingsMoveList.Where(mov =>  (mov.endColumn == 0 && mov.endRow == 0)
+                                        ||(mov.endColumn == 0 && mov.endRow ==sizeY)
+                                        || (mov.endColumn == sizeX && mov.endRow == 0)
+                                        || (mov.endColumn == sizeX && mov.endRow == sizeY)
+                        ).ToList();
+                        if(kingsMoveList.Count>0)
+                        {
+                            item.parent.parent.scoreKingsCouncil += desireForKingToBeClearToCorner/ (double) moveList[1].Count;
+                        }
+
+                    });
+
                 }
 
                 

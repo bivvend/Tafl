@@ -90,7 +90,8 @@ namespace Tafl.ViewModel
             }
         }
 
-        public MoveViewModel(Move move)        {
+        public MoveViewModel(Move move)
+        {
 
             Details = move.ToString();
         }
