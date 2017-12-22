@@ -14,6 +14,7 @@ namespace Tafl.AI
         public double desireForWinDepth2 = 10000.0;
 
         public double desireNotToLoseDepth1 = 1000000000.0;  // Always move to block a loss 
+        public double desireNotToLoseDepth3 = 100000;
 
         public List<Move> Evaluate(List<List<Move>> inputMoveList, TurnState currentTurnState)
         {
@@ -56,21 +57,48 @@ namespace Tafl.AI
                         item.parent.scoreAssassin -= desireNotToLoseDepth1;
                     }
                 });
-
             }
 
-
-            if (numberMovesDepth0 < 1)
+            //Check to see if can win, but not if can lose on next defender move
+            if (numberOfLosesDepth1 < 1)
             {
                 inputMoveList[2].ForEach(item =>
                 {
                     if (item.CheckForAttackerVictory())
                     {
                         item.parent.parent.scoreAssassin += desireForWinDepth2 / (double)inputMoveList[1].Count;
-                    }
-                    
+                    }                    
                 });
             }
+
+
+            //look for moves of the king at depth 3 
+            //Look for routes for the king at depth 3 to get to corner
+            sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0) - 1;
+            sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1) - 1;
+            SimpleSquare kingSquare = new SimpleSquare();
+            List<Move> kingsMoveList = new List<Move>();
+            if (numberOfLosesDepth1 < 1)
+            {
+                inputMoveList[2].ForEach(item =>
+                {
+
+                    kingSquare = item.FindTheKing(item.board);
+                    Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
+                    kingsMoveList = item.board.GetMovesForPiece(king, item, 3);
+                    kingsMoveList = kingsMoveList.Where(mov => (mov.endColumn == 0 && mov.endRow == 0)
+                                    || (mov.endColumn == 0 && mov.endRow == sizeY)
+                                    || (mov.endColumn == sizeX && mov.endRow == 0)
+                                    || (mov.endColumn == sizeX && mov.endRow == sizeY)
+                    ).ToList();
+                    if (kingsMoveList.Count > 0)
+                    {
+                        item.parent.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
+                    }
+
+                });
+            }
+
 
             suggestedMoves.Add(inputMoveList[0].MaxObject(item => item.scoreAssassin));
 
