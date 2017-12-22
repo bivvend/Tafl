@@ -93,6 +93,7 @@ namespace Tafl.AI
             bool isDefender = false;
             bool isAttacker = false;
             bool isKing = false;
+            bool Error = false;
 
             if (board.OccupationArray[move.startColumn, move.startRow] == Square.occupation_type.Defender)
                 isDefender = true;
@@ -102,6 +103,12 @@ namespace Tafl.AI
                 isKing = true;
 
             //Make the move
+            if(board.OccupationArray[move.endColumn, move.endRow]!= Square.occupation_type.Empty)
+            {
+                //Error somewhere
+                Error = true;
+                throw new Exception();
+            }
             board.OccupationArray[move.endColumn, move.endRow] = board.OccupationArray[move.startColumn, move.startRow];
             board.OccupationArray[move.startColumn, move.startRow] = Square.occupation_type.Empty;
 
@@ -115,14 +122,21 @@ namespace Tafl.AI
         {
             SimpleSquare retSquare = new SimpleSquare();
 
-            if(column >= board.OccupationArray.GetLength(0) || column<0 || row>= board.OccupationArray.GetLength(1) || row < 0)
+            try
+            {
+                if (column >= board.OccupationArray.GetLength(0) || column < 0 || row >= board.OccupationArray.GetLength(1) || row < 0)
+                {
+                    return null;
+                }
+                retSquare.Occupation = board.OccupationArray[column, row];
+                retSquare.SquareType = board.SquareTypeArray[column, row];
+                retSquare.Row = row;
+                retSquare.Column = column;
+            }
+            catch(Exception ex)
             {
                 return null;
             }
-            retSquare.Occupation = board.OccupationArray[column, row];
-            retSquare.SquareType = board.SquareTypeArray[column, row];
-            retSquare.Row = row;
-            retSquare.Column = column;
             
             return retSquare;
 
@@ -178,16 +192,48 @@ namespace Tafl.AI
 
                 }
             }
-
+            if(kingSquare == null)
+            {
+                return null;
+            }
 
             return kingSquare;
+        }
+
+        public bool CheckForAttackerVictory()
+        {
+            //Check to see if King is surrounded on 4 sides
+            try
+            {
+                SimpleSquare kingSquare = FindTheKing(this.board);
+                if (kingSquare == null)
+                    return false;
+                SimpleSquare up = GetSquare(kingSquare.Row - 1, kingSquare.Column);
+                SimpleSquare down = GetSquare(kingSquare.Row + 1, kingSquare.Column);
+                SimpleSquare left = GetSquare(kingSquare.Row, kingSquare.Column - 1);
+                SimpleSquare right = GetSquare(kingSquare.Row, kingSquare.Column + 1);
+
+                if (up != null && down != null && left != null && right != null)
+                {
+                    if ((up.AttackerPresent || up.SquareType == Square.square_type.Throne) && (down.AttackerPresent || down.SquareType == Square.square_type.Throne) && (left.AttackerPresent || left.SquareType == Square.square_type.Throne) && (right.AttackerPresent || right.SquareType == Square.square_type.Throne))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         private void SearchAroundForTake(SimpleSquare squareToCheck, SimpleSquare endSquare, direction dir)
         {
             //squareToCheck is the square with the possible piece to be taken,  endSquare is the square into which the possible taker moved, direction is the direction that the taker moved w.r.t takee.
             SimpleSquare squareTwoAway = null;
-            if (squareToCheck.Occupation != Square.occupation_type.Empty) //Something in the square
+            if (squareToCheck.Occupation != Square.occupation_type.Empty && squareToCheck.Occupation != Square.occupation_type.King) //Something in the square
             {
                 if (squareToCheck.AttackerPresent && (endSquare.KingPresent || endSquare.DefenderPresent))
                 {

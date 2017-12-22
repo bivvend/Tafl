@@ -74,6 +74,8 @@ namespace Tafl.AI
             return moveList;
         }
 
+        
+
         public List<Move> GetMovesForPiece(Piece p, Move parent, int depth)
         {
             List<Move> moveList = new List<Move>();

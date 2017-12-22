@@ -61,7 +61,7 @@ namespace Tafl.AI
             });
 
             //pick best to return
-            suggestedMove = inputMoveList[0].MaxObject((item) => item.scoreSage);
+            suggestedMove = bestList.MaxObject((item) => item.scoreSage);
         }
 
         

@@ -93,6 +93,10 @@ namespace Tafl.AI
                     {
                         
                         kingSquare = item.FindTheKing(item.board);
+                        if(kingSquare ==null)
+                        {
+                            numberDepth2Wins = numberDepth2Wins;
+                        }
                         Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
                         kingsMoveList = item.board.GetMovesForPiece(king, item, 3);
                         kingsMoveList = kingsMoveList.Where(mov =>  (mov.endColumn == 0 && mov.endRow == 0)

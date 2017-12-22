@@ -82,7 +82,27 @@ namespace Tafl.Model
 
             return false;
         }
-    
+
+        public bool CheckForDefenderVictory()
+        {
+            //Check to see if King is surrounded on 4 sides
+            Square kingSquare = null;
+            List<Square> squaresFound = board.Where((item) => item.KingPresent).ToList();
+            if (squaresFound.Count > 0)
+            {
+                kingSquare = squaresFound[0];
+            }
+            if (kingSquare == null)
+                return false;
+            
+            if(kingSquare.SquareType == Square.square_type.Corner)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public bool MovePiece(int startRow, int startColumn,  int endRow, int endColumn)
         {
             Square startSquare = GetSquare(startRow, startColumn);

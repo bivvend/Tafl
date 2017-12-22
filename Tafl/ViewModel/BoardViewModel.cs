@@ -92,28 +92,21 @@ namespace Tafl.ViewModel
                             //Check for Defender victory
                             if(square.SquareType == Square.square_type.Corner && square.KingPresent)
                             {
-                                //Defended Won!
+                                //Defender Won!
                                 GameVModel.CurrentTurnState = GameModel.TurnState.VictoryDefender;
                             }
 
                             //Check for Attacker victory
                             if(GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
-                            {
-                                //Is king surrounded on 4 sides
-                                Board.ToList().ForEach((item) =>
+                            {                                
+                                if(BoardSetup.CheckForAttackerVictory())
                                 {
-                                    if(item.KingPresent)
-                                    {
-                                        if(BoardSetup.CheckForAttackerVictory())
-                                        {
-                                            GameVModel.CurrentTurnState = GameModel.TurnState.VictoryAttacker;
-                                        }
-                                    }                                   
-
-                                });
-
-                                
+                                    GameVModel.CurrentTurnState = GameModel.TurnState.VictoryAttacker;
+                                }
+                                                                 
                             }
+
+                            
 
                             //Next Turn
                             moveMade = true;
@@ -181,6 +174,22 @@ namespace Tafl.ViewModel
                 }
             }
 
+            if (GameVModel.CurrentTurnState == GameModel.TurnState.Attacker)
+            {
+                if (BoardSetup.CheckForAttackerVictory())
+                {
+                    GameVModel.CurrentTurnState = GameModel.TurnState.VictoryAttacker;
+                }
+            }
+
+            if(GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
+            {
+                if(BoardSetup.CheckForDefenderVictory())
+                {
+                    GameVModel.CurrentTurnState = GameModel.TurnState.VictoryDefender;
+                }
+
+            }
 
             if (GameVModel.CurrentTurnState == GameModel.TurnState.Defender)
             {  

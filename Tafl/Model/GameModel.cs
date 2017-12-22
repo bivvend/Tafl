@@ -156,15 +156,15 @@ namespace Tafl.Model
             {
                 //Make the moves
                 m2.MakeMove(m2, m2.parent.board);
-                //Look at all the depth 1 moves for the opposing side
+                //Look at all the depth 1 moves for the initial side
 
                 if (currentTurnState == TurnState.Defender)
                 {
-                    moveList[2].AddRange(m2.parent.board.GetPossibleMoves(TurnState.Defender, m2, 2));
+                    moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
                 }
                 if (currentTurnState == TurnState.Attacker)
                 {
-                    moveList[2].AddRange(m2.parent.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
+                    moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
 
                 }
 
