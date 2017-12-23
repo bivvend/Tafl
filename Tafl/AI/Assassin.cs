@@ -19,15 +19,18 @@ namespace Tafl.AI
         public List<Move> Evaluate(List<List<Move>> inputMoveList, TurnState currentTurnState)
         {
             List<Move> suggestedMoves = new List<Move>();
-            
+
             //Look to have the outer pieces on the maximum number of rows
+            DateTime start = DateTime.Now;
+            TimeSpan duration = new TimeSpan();
+            double runTime = 0.0d;
 
             int sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0);
             int sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1);
 
             int numberMovesDepth0 = 0;
-
             int numberOfLosesDepth1 = 0;
+            bool foundwin = false;
 
             inputMoveList[0].ForEach(item =>
             {
@@ -35,70 +38,85 @@ namespace Tafl.AI
                 {
                     item.scoreAssassin = desireForWinDepth0;
                     numberMovesDepth0++;
+                    foundwin = true;
                 }
             });
 
             //check to see if a move blocks a depth 1 loss
-            inputMoveList[1].ForEach(item =>
-            {
-                if(item.FindTheKing(item.board).SquareType == Model.Square.square_type.Corner)
-                {
-                    numberOfLosesDepth1++;
-                }                
-            });
+            if (!foundwin)
+            {          
 
-            //If a loss is possible all moves in which the loss can happen should be penalised.
-            if(numberOfLosesDepth1>0)
-            {
                 inputMoveList[1].ForEach(item =>
                 {
                     if (item.FindTheKing(item.board).SquareType == Model.Square.square_type.Corner)
                     {
-                        item.parent.scoreAssassin -= desireNotToLoseDepth1;
+                        numberOfLosesDepth1++;
                     }
                 });
-            }
 
-            //Check to see if can win, but not if can lose on next defender move
-            if (numberOfLosesDepth1 < 1)
-            {
-                inputMoveList[2].ForEach(item =>
+                runTime = (DateTime.Now - start).TotalSeconds;
+
+                //If a loss is possible all moves in which the loss can happen should be penalised.
+                if (numberOfLosesDepth1 > 0)
                 {
-                    if (item.CheckForAttackerVictory())
+                    inputMoveList[1].ForEach(item =>
                     {
-                        item.parent.parent.scoreAssassin += desireForWinDepth2 / (double)inputMoveList[1].Count;
-                    }                    
-                });
-            }
+                        if (item.FindTheKing(item.board).SquareType == Model.Square.square_type.Corner)
+                        {
+                            item.parent.scoreAssassin -= desireNotToLoseDepth1;
+                        }
+                    });
+                }
 
+                runTime = (DateTime.Now - start).TotalSeconds;
 
-            //look for moves of the king at depth 3 
-            //Look for routes for the king at depth 3 to get to corner
-            sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0) - 1;
-            sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1) - 1;
-            SimpleSquare kingSquare = new SimpleSquare();
-            List<Move> kingsMoveList = new List<Move>();
-            if (numberOfLosesDepth1 < 1)
-            {
-                inputMoveList[2].ForEach(item =>
+                //Check to see if can win, but not if can lose on next defender move
+                if (numberOfLosesDepth1 < 1)
                 {
-
-                    kingSquare = item.FindTheKing(item.board);
-                    Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
-                    kingsMoveList = item.board.GetMovesForPiece(king, item, 3);
-                    kingsMoveList = kingsMoveList.Where(mov => (mov.endColumn == 0 && mov.endRow == 0)
-                                    || (mov.endColumn == 0 && mov.endRow == sizeY)
-                                    || (mov.endColumn == sizeX && mov.endRow == 0)
-                                    || (mov.endColumn == sizeX && mov.endRow == sizeY)
-                    ).ToList();
-                    if (kingsMoveList.Count > 0)
+                    Parallel.ForEach(inputMoveList[2], item =>
                     {
-                        item.parent.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
-                    }
+                        if (item.CheckForAttackerVictory())
+                        {
+                            item.parent.parent.scoreAssassin += desireForWinDepth2 / (double)inputMoveList[1].Count;
+                        }
+                    });
+                }
 
-                });
+                runTime = (DateTime.Now - start).TotalSeconds;
+
+                //look for moves of the king at depth 3 
+                //Look for routes for the king at depth 3 to get to corner
+                sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0) - 1;
+                sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1) - 1;
+                SimpleSquare kingSquare = new SimpleSquare();
+                List<Move> kingsMoveList = new List<Move>();
+
+                Object _lock = new Object();
+                if (numberOfLosesDepth1 < 1)
+                {
+                    Parallel.ForEach(inputMoveList[2], item =>
+                    {
+                        lock (_lock)
+                        {
+                            kingSquare = item.FindTheKing(item.board);
+                            Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
+                            kingsMoveList = item.board.GetMovesForPiece(king, item, 3); // This is very expensive
+                            kingsMoveList = kingsMoveList.Where(mov => (mov.endColumn == 0 && mov.endRow == 0)
+                                            || (mov.endColumn == 0 && mov.endRow == sizeY)
+                                            || (mov.endColumn == sizeX && mov.endRow == 0)
+                                            || (mov.endColumn == sizeX && mov.endRow == sizeY)
+                            ).ToList();
+                            if (kingsMoveList.Count > 0)
+                            {
+                                item.parent.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
+                            }
+                        }
+
+                    });
+
+                }
             }
-
+            runTime = (DateTime.Now - start).TotalSeconds;
 
             suggestedMoves.Add(inputMoveList[0].MaxObject(item => item.scoreAssassin));
 

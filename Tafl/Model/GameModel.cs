@@ -25,8 +25,8 @@ namespace Tafl.Model
                 sage = value;
             }
         }
-        
 
+        public string errorString = "";
 
         private SimpleBoard baseBoard;
         public SimpleBoard BaseBoard
@@ -153,53 +153,62 @@ namespace Tafl.Model
             //Create Depth 2 moves
             moveList.Add(new List<Move>());
 
-           // moveList[1].ForEach((m2) =>
-           //{
-           //     //Make the moves
-           //     m2.MakeMove(m2, m2.parent.board);
-           //     //Look at all the depth 1 moves for the initial side
+            // moveList[1].ForEach((m2) =>
+            //{
+            //     //Make the moves
+            //     m2.MakeMove(m2, m2.parent.board);
+            //     //Look at all the depth 1 moves for the initial side
 
-           //     if (currentTurnState == TurnState.Defender)
-           //    {
-           //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
-           //    }
-           //    if (currentTurnState == TurnState.Attacker)
-           //    {
-           //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
+            //     if (currentTurnState == TurnState.Defender)
+            //    {
+            //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
+            //    }
+            //    if (currentTurnState == TurnState.Attacker)
+            //    {
+            //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
 
-           //    }
+            //    }
 
-           //});
+            //});
 
 
+            Object _lock = new object();
 
             Parallel.ForEach(moveList[1], (m2) =>
             {
                 //Look at all the depth 1 moves for the initial side
                 m2.MakeMove(m2, m2.parent.board);
-                if (currentTurnState == TurnState.Defender)
+                lock (_lock)
                 {
-                    moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
-                }
-                if (currentTurnState == TurnState.Attacker)
-                {
-                    moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
+                    if (currentTurnState == TurnState.Defender)
+                    {
+                        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
+                    }
+                    if (currentTurnState == TurnState.Attacker)
+                    {
+                        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
 
+                    }
                 }
+            });
 
+
+
+            //Make depth 2 moves
+            //moveList[2].ForEach((m3) =>
+            //{
+            //    //Make the moves
+            //     m3.MakeMove(m3, m3.parent.board);
+            //});
+
+            Parallel.ForEach(moveList[2], m3 =>
+            {
+                //Make the moves
+                m3.MakeMove(m3, m3.parent.board);
             });
 
             TimeSpan depth2duration = (DateTime.Now - start);
             double runtimetodepth2 = depth2duration.TotalSeconds;
-
-            //Make depth 2 moves
-            moveList[2].ForEach((m3) =>
-            {
-                //Make the moves
-                m3.MakeMove(m3, m3.parent.board);
-
-            });
-
 
             //Propagate scores
             for (int i = moveList.Count-1; i>=0; i--)
