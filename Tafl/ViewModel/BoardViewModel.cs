@@ -120,6 +120,7 @@ namespace Tafl.ViewModel
                                     {
                                         AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
+                                        GameVModel.RunTime = AIMove.runTime;
                                     });
                                     GameVModel.Thinking = false;
 
@@ -136,6 +137,7 @@ namespace Tafl.ViewModel
                                     {
                                         AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
+                                        GameVModel.RunTime = AIMove.runTime;
                                     });
                                     GameVModel.Thinking = false;
                                 }
@@ -157,6 +159,8 @@ namespace Tafl.ViewModel
             {
                 Task.Delay(10);
             }
+
+            
 
             //Overlay the simple board onto the real board
             int SizeX = aMove.board.OccupationArray.GetLength(0);

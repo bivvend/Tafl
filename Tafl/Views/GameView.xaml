@@ -57,14 +57,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"></RowDefinition>
                 <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
+
             </Grid.RowDefinitions>
             <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label>Best Moves</Label>
                 <ComboBox MinWidth="200" ItemsSource="{Binding MoveList}" DisplayMemberPath="Details" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"></ComboBox>
             </WrapPanel>
+            <Label Grid.Row="1" Grid.Column="0"> Run time:</Label>
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding RunTime}"></Label>
         </Grid>
     </Grid>
 </UserControl>

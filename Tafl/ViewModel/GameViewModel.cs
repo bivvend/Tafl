@@ -69,6 +69,19 @@ namespace Tafl.ViewModel
 
         }
 
+        private double runTime;
+        public double RunTime
+        {
+            get
+            {
+                return runTime;
+            }
+            set
+            {
+                runTime = value;
+                RaisePropertyChanged("RunTime");
+            }
+        }
 
         private bool pauseAfterAITurn;
         public bool PauseAfterAITurn
@@ -216,10 +229,12 @@ namespace Tafl.ViewModel
             Move AIMove = new Move();
             await Task.Run(async () =>
             {
-                AIMove = await Game.RunAITurn(Board.GetSimpleBoard());
+                AIMove = await Game.RunAITurn(Board.GetSimpleBoard());                
                 await boardViewModel.ApplyAIMove(AIMove);
+                RunTime = AIMove.runTime;
             });
             Thinking = false;
+            
 
             //Start next turn
 

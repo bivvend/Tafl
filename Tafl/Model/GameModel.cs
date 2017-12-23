@@ -119,11 +119,11 @@ namespace Tafl.Model
         public async Task<Move> RunAITurn(SimpleBoard startBoard)
         {
             this.BaseBoard = startBoard;
-            Move suggetedMove = new Move();
 
             List<List<Move>> moveList = new List<List<Move>>();
             InvokeAction(new Action(() => MoveViewModelList.Clear()));
-            
+
+            DateTime start = DateTime.Now;
 
             
             //Fill list with all possible moves of depth 0
@@ -152,12 +152,31 @@ namespace Tafl.Model
 
             //Create Depth 2 moves
             moveList.Add(new List<Move>());
-            moveList[1].ForEach((m2) =>
-            {
-                //Make the moves
-                m2.MakeMove(m2, m2.parent.board);
-                //Look at all the depth 1 moves for the initial side
 
+            //moveList[1].ForEach( (m2) =>
+            //{
+            //    //Make the moves
+            //    m2.MakeMove(m2, m2.parent.board);
+            //    //Look at all the depth 1 moves for the initial side
+
+            //    if (currentTurnState == TurnState.Defender)
+            //    {
+            //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
+            //    }
+            //    if (currentTurnState == TurnState.Attacker)
+            //    {
+            //        moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2));
+
+            //    }
+
+            //});
+
+            
+
+            Parallel.ForEach(moveList[1], (m2) =>
+            {
+                //Look at all the depth 1 moves for the initial side
+                m2.MakeMove(m2, m2.parent.board);
                 if (currentTurnState == TurnState.Defender)
                 {
                     moveList[2].AddRange(m2.board.GetPossibleMoves(TurnState.Defender, m2, 2));
@@ -169,6 +188,7 @@ namespace Tafl.Model
                 }
 
             });
+
             //Make depth 2 moves
             moveList[2].ForEach((m3) =>
             {
@@ -226,7 +246,9 @@ namespace Tafl.Model
             }));
 
 
-
+            TimeSpan duration = (DateTime.Now - start);
+            double runtime = duration.TotalSeconds;
+            Sage.suggestedMove.runTime = runtime;
             return Sage.suggestedMove;
             
         }

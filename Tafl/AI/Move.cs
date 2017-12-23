@@ -10,7 +10,8 @@ namespace Tafl.AI
 {
     public class Move 
     {
-        
+
+        public double runTime { get; set; }
         public int startColumn { get; set; }
         public int startRow { get; set; }
         public int endColumn { get; set; }
