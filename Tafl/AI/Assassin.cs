@@ -22,8 +22,12 @@ namespace Tafl.AI
 
             //Look to have the outer pieces on the maximum number of rows
             DateTime start = DateTime.Now;
+            DateTime start2 = DateTime.Now;
             TimeSpan duration = new TimeSpan();
             double runTime = 0.0d;
+            double runTime2 = 0.0d;
+            SimpleSquare kingSquare = new SimpleSquare();
+            List<Move> kingsMoveList = new List<Move>();
 
             int sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0);
             int sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1);
@@ -70,31 +74,47 @@ namespace Tafl.AI
 
                 runTime = (DateTime.Now - start).TotalSeconds;
 
+                start2 = DateTime.Now;
+
                 //Check to see if can win, but not if can lose on next defender move
+                bool worthLookingDeep = false;
+                
                 if (numberOfLosesDepth1 < 1)
                 {
-                    Parallel.ForEach(inputMoveList[2], item =>
+                    //Check if king is at least surrounded by 2 attackers  -  if so look for a 2 move combo that might win
+                    inputMoveList[0].ForEach(item =>
                     {
-                        if (item.CheckForAttackerVictory())
+                        if(item.NumberOfAttackersAroundKing() >= 2)
                         {
-                            item.parent.parent.scoreAssassin += desireForWinDepth2 / (double)inputMoveList[1].Count;
+                            worthLookingDeep = true;
                         }
+                         
                     });
-                }
 
+                    if (worthLookingDeep)
+                    {
+                        Parallel.ForEach(inputMoveList[2], item =>
+                        {
+                            if (item.CheckForAttackerVictory())
+                            {
+                                item.parent.parent.scoreAssassin += desireForWinDepth2 / (double)inputMoveList[1].Count;
+                            }
+                        });
+                    }
+                }
+                runTime2 = (DateTime.Now - start2).TotalSeconds;
                 runTime = (DateTime.Now - start).TotalSeconds;
 
                 //look for moves of the king at depth 3 
                 //Look for routes for the king at depth 3 to get to corner
                 sizeX = inputMoveList[0][0].board.OccupationArray.GetLength(0) - 1;
                 sizeY = inputMoveList[0][0].board.OccupationArray.GetLength(1) - 1;
-                SimpleSquare kingSquare = new SimpleSquare();
-                List<Move> kingsMoveList = new List<Move>();
+                
 
                 Object _lock = new Object();
                 if (numberOfLosesDepth1 < 1)
                 {
-                    Parallel.ForEach(inputMoveList[2], item =>
+                    inputMoveList[1].ForEach( item =>  //This could be moveList[2] but would be slow.   This only evolves from the defenders last move (i.e. skips the attackers move)
                     {
                         lock (_lock)
                         {
@@ -108,7 +128,7 @@ namespace Tafl.AI
                             ).ToList();
                             if (kingsMoveList.Count > 0)
                             {
-                                item.parent.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
+                                item.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
                             }
                         }
 

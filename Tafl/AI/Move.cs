@@ -178,6 +178,28 @@ namespace Tafl.AI
 
         }
 
+        public int NumberOfAttackersAroundKing()
+        {
+            int numberOfAttackers = 0;
+            SimpleSquare kingSquare = FindTheKing(board);
+            SimpleSquare up = GetSquare(kingSquare.Row - 1, kingSquare.Column);
+            SimpleSquare down = GetSquare(kingSquare.Row + 1, kingSquare.Column);
+            SimpleSquare left = GetSquare(kingSquare.Row, kingSquare.Column - 1);
+            SimpleSquare right = GetSquare(kingSquare.Row, kingSquare.Column + 1);
+
+            if (up != null && up.AttackerPresent)
+                numberOfAttackers++;
+            if (down != null && down.AttackerPresent)
+                numberOfAttackers++;
+            if (left != null && left.AttackerPresent)
+                numberOfAttackers++;
+            if (right != null && right.AttackerPresent)
+                numberOfAttackers++;
+
+
+            return numberOfAttackers;
+        }
+
         public SimpleSquare FindTheKing(SimpleBoard board)
         {
             SimpleSquare kingSquare = null;
