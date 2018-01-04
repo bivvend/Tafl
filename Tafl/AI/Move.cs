@@ -116,6 +116,11 @@ namespace Tafl.AI
             //Process takes
             CheckAndProcessTake();
 
+            //Reassign kingSquare
+            if(isKing)
+            {
+                board.kingSquare = new SimpleSquare(move.endColumn, move.endRow, Square.occupation_type.King, board.SquareTypeArray[move.endColumn, move.endRow]);
+            }
 
         }
 
@@ -181,7 +186,7 @@ namespace Tafl.AI
         public int NumberOfAttackersAroundKing()
         {
             int numberOfAttackers = 0;
-            SimpleSquare kingSquare = FindTheKing(board);
+            SimpleSquare kingSquare = FindTheKing(board, true);
             SimpleSquare up = GetSquare(kingSquare.Row - 1, kingSquare.Column);
             SimpleSquare down = GetSquare(kingSquare.Row + 1, kingSquare.Column);
             SimpleSquare left = GetSquare(kingSquare.Row, kingSquare.Column - 1);
@@ -200,27 +205,33 @@ namespace Tafl.AI
             return numberOfAttackers;
         }
 
-        public SimpleSquare FindTheKing(SimpleBoard board)
+        public SimpleSquare FindTheKing(SimpleBoard board, bool quick)
         {
-            SimpleSquare kingSquare = null;
-            for(int i=0; i< board.OccupationArray.GetLength(0); i++) //Rows
+
+            if (quick)
+                return board.kingSquare;
+            else
             {
-                for (int j = 0; j < board.OccupationArray.GetLength(1); j++) //Columns
+                SimpleSquare kingSquare = null;
+                for (int i = 0; i < board.OccupationArray.GetLength(0); i++) //Rows
                 {
-                    if(board.OccupationArray[j,i] == Square.occupation_type.King)
+                    for (int j = 0; j < board.OccupationArray.GetLength(1); j++) //Columns
                     {
-                        kingSquare = new SimpleSquare(j, i, Square.occupation_type.King, board.SquareTypeArray[j, i]);
-                        return kingSquare;
+                        if (board.OccupationArray[j, i] == Square.occupation_type.King)
+                        {
+                            kingSquare = new SimpleSquare(j, i, Square.occupation_type.King, board.SquareTypeArray[j, i]);
+                            return kingSquare;
+                        }
+
                     }
-
                 }
-            }
-            if(kingSquare == null)
-            {
-                return null;
-            }
+                if (kingSquare == null)
+                {
+                    return null;
+                }
 
-            return kingSquare;
+                return kingSquare;
+            }
         }
 
         public bool CheckForAttackerVictory()
@@ -228,7 +239,7 @@ namespace Tafl.AI
             //Check to see if King is surrounded on 4 sides
             try
             {
-                SimpleSquare kingSquare = FindTheKing(this.board);
+                SimpleSquare kingSquare = FindTheKing(this.board, true);
                 if (kingSquare == null)
                     return false;
                 SimpleSquare up = GetSquare(kingSquare.Row - 1, kingSquare.Column);

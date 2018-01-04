@@ -14,6 +14,8 @@ namespace Tafl.AI
 
         public Square.square_type[,] SquareTypeArray { get; set; }    // Will be used sparingly,  as all boards will take the same type array
 
+        public SimpleSquare kingSquare = null;     //Used to store the location of the king to improve AI speed.
+
         public SimpleBoard()
         {
             
@@ -33,6 +35,10 @@ namespace Tafl.AI
                 for (int j = 0; j < SizeX; j++) //Columns
                 {
                     newOcc[j, i] = input.OccupationArray[j, i];
+                    if(input.OccupationArray[j,i] == Square.occupation_type.King)
+                    {
+                        this.kingSquare = new SimpleSquare(j, i, Square.occupation_type.King, input.SquareTypeArray[j, i]);
+                    }
                     newTypes[j, i] = input.SquareTypeArray[j, i];
                 }
             }

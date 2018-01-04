@@ -52,7 +52,7 @@ namespace Tafl.AI
 
                 inputMoveList[1].ForEach(item =>
                 {
-                    if (item.FindTheKing(item.board).SquareType == Model.Square.square_type.Corner)
+                    if (item.FindTheKing(item.board, true).SquareType == Model.Square.square_type.Corner)
                     {
                         numberOfLosesDepth1++;
                     }
@@ -65,7 +65,7 @@ namespace Tafl.AI
                 {
                     inputMoveList[1].ForEach(item =>
                     {
-                        if (item.FindTheKing(item.board).SquareType == Model.Square.square_type.Corner)
+                        if (item.FindTheKing(item.board, true).SquareType == Model.Square.square_type.Corner)
                         {
                             item.parent.scoreAssassin -= desireNotToLoseDepth1;
                         }
@@ -116,21 +116,19 @@ namespace Tafl.AI
                 {
                     inputMoveList[1].ForEach( item =>  //This could be moveList[2] but would be slow.   This only evolves from the defenders last move (i.e. skips the attackers move)
                     {
-                        lock (_lock)
+
+                        kingSquare = item.FindTheKing(item.board, true);
+                        Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
+                        kingsMoveList = item.board.GetMovesForPiece(king, item, 3); // This is very expensive
+                        kingsMoveList = kingsMoveList.Where(mov => (mov.endColumn == 0 && mov.endRow == 0)
+                                        || (mov.endColumn == 0 && mov.endRow == sizeY)
+                                        || (mov.endColumn == sizeX && mov.endRow == 0)
+                                        || (mov.endColumn == sizeX && mov.endRow == sizeY)
+                        ).ToList();
+                        if (kingsMoveList.Count > 0)
                         {
-                            kingSquare = item.FindTheKing(item.board);
-                            Piece king = new Piece(kingSquare.Column, kingSquare.Row, Piece.PieceType.King);
-                            kingsMoveList = item.board.GetMovesForPiece(king, item, 3); // This is very expensive
-                            kingsMoveList = kingsMoveList.Where(mov => (mov.endColumn == 0 && mov.endRow == 0)
-                                            || (mov.endColumn == 0 && mov.endRow == sizeY)
-                                            || (mov.endColumn == sizeX && mov.endRow == 0)
-                                            || (mov.endColumn == sizeX && mov.endRow == sizeY)
-                            ).ToList();
-                            if (kingsMoveList.Count > 0)
-                            {
-                                item.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
-                            }
-                        }
+                            item.parent.scoreAssassin -= desireNotToLoseDepth3 / (double)inputMoveList[1].Count;
+                        }                        
 
                     });
 
