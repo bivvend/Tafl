@@ -115,6 +115,130 @@ namespace Tafl.Model
             await Application.Current.Dispatcher.BeginInvoke(a);
         }
 
+        public async Task<Move> RunAITurnLowerMem(SimpleBoard startBoard)
+        {
+            this.BaseBoard = startBoard;
+
+            List<Move> moveList_0 = new List<Move>();
+            List<Move> moveList_1 = new List<Move>();
+            List<Move> moveList_2 = new List<Move>();
+            InvokeAction(new Action(() => MoveViewModelList.Clear()));
+            DateTime start = DateTime.Now;
+            Sage.bestList = new List<Move>();
+            Sage.longTermBestList = new List<Move>();
+            List<List<Move>> moveList = new List<List<Move>>();
+            //Fill list with all possible moves of depth 0
+
+            moveList_0= BaseBoard.GetPossibleMoves(this.currentTurnState, null, 0);
+
+            Object _lock = new object();
+
+            //Create Depth 1 moves
+            moveList_0.ForEach((m) =>
+            {
+                //Make the moves
+                m.MakeMove(m, BaseBoard);
+                
+                //Look at all the depth 1 moves for the opposing side
+
+                if (currentTurnState == TurnState.Defender)
+                {
+
+                    moveList_1 = m.board.GetPossibleMoves(TurnState.Attacker, m, 1);
+                }
+                if (currentTurnState == TurnState.Attacker)
+                {
+                    moveList_1 = m.board.GetPossibleMoves(TurnState.Defender, m, 1);
+
+                }
+
+                moveList_1.ForEach((m2) =>
+                {
+                    m2.MakeMove(m2, m2.parent.board);
+                });
+
+                moveList_1.ForEach((m2) =>
+                {
+                    //Look at all the depth 1 moves for the initial side                    
+
+                    if (currentTurnState == TurnState.Defender)
+                    {
+                        moveList_2 = m2.board.GetPossibleMoves(TurnState.Defender, m2, 2);
+                    }
+                    if (currentTurnState == TurnState.Attacker)
+                    {
+                        moveList_2 = m2.board.GetPossibleMoves(TurnState.Attacker, m2, 2);
+
+                    }
+
+                    moveList_2.ForEach((m3) =>
+                    {
+                        //Make the moves
+                        m3.MakeMove(m3, m3.parent.board);
+                    });
+
+
+                    //build List<List<Move>>
+                    moveList.Clear();
+                    moveList.Add(new List<Move>());
+                    moveList[0].Add(m);
+                    moveList.Add(moveList_1);
+                    moveList.Add(moveList_2);
+
+                    //Propagate scores
+                    for (int i = moveList.Count - 1; i >= 0; i--)
+                    {
+
+                        //Push all the data to the depth 0 moves
+                        moveList[i].ForEach((item) =>
+                        {
+                            if (i != 0)
+                            {
+                                //Total number of takes in the pipeline downwards
+                                if (item.numberTakesAttacker > 0 || item.numberTakesDefender > 0)
+                                {
+                                     m.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                                        m.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                                }
+                            }
+                            else
+                            {
+                                item.numberTakesAttackerAtDepth[0] = item.numberTakesAttacker;
+                                item.numberTakesDefenderAtDepth[0] = item.numberTakesDefender;
+                            }
+
+
+                        });
+
+                    }
+
+                    Sage.ProcessMoves(moveList, currentTurnState);
+                 
+
+                });
+
+            });   
+
+            TimeSpan depth2duration = (DateTime.Now - start);
+            double runtimetodepth2 = depth2duration.TotalSeconds;
+            
+            TimeSpan duration = (DateTime.Now - start);
+            double runtime = duration.TotalSeconds;
+            Move bestMove = Sage.longTermBestList.MaxObject((item) => item.scoreSage);
+
+
+            InvokeAction(new Action(() =>
+            {
+                MoveViewModelList.Add(new MoveViewModel(bestMove));               
+
+            }));
+
+            bestMove.runTime = runtime;
+            return bestMove;
+
+
+        }
+
        
         public async Task<Move> RunAITurn(SimpleBoard startBoard)
         {

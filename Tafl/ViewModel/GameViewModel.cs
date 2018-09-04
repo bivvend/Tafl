@@ -229,7 +229,8 @@ namespace Tafl.ViewModel
             Move AIMove = new Move();
             await Task.Run(async () =>
             {
-                AIMove = await Game.RunAITurn(Board.GetSimpleBoard());                
+                //AIMove = await Game.RunAITurn(Board.GetSimpleBoard());
+                AIMove = await Game.RunAITurnLowerMem(Board.GetSimpleBoard());
                 await boardViewModel.ApplyAIMove(AIMove);
                 RunTime = AIMove.runTime;
             });

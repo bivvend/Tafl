@@ -118,7 +118,8 @@ namespace Tafl.ViewModel
                                     GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
-                                        AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
                                     });
@@ -135,7 +136,8 @@ namespace Tafl.ViewModel
                                     GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
-                                        AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
+                                        AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
                                     });
