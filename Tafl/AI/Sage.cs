@@ -28,6 +28,8 @@ namespace Tafl.AI
 
         public TurnState currentTurnState { get; set; } = TurnState.Attacker;
 
+        private readonly Object locker = new Object();
+
         public Sage()
         {
             general = new General();
@@ -83,7 +85,52 @@ namespace Tafl.AI
             //longTermSuggestedMove = bestList.MaxObject((item) => item.scoreSage);
         }
 
-        
+        public void ProcessMovesLowerMem(List<List<Move>> input, TurnState turnState)
+        {
+            try
+            {
+                this.inputMoveList = input;
+                this.currentTurnState = turnState;
+
+
+                lock (locker)
+                {
+                    //Ask general to process moves            
+                    longTermBestList.AddRange(general.Evaluate(inputMoveList, turnState));
+
+                    if (turnState == TurnState.Attacker)
+                    {
+                        longTermBestList.AddRange(assassin.Evaluate(inputMoveList, turnState));
+                    }
+
+                    if (turnState == TurnState.Defender)
+                    {
+                        longTermBestList.AddRange(kingsCouncil.Evaluate(inputMoveList, turnState));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                int i = 0; 
+            }
+
+        }
+
+        public Move PickBestLowerMem()
+        {
+            longTermBestList.ForEach((item) =>
+            {
+
+                item.scoreSage = item.scoreGeneral * weightGeneral + item.scoreKingsCouncil * weightKingsCouncil + item.scoreAssassin * weightAssassin;
+
+            });
+
+            //pick best to return
+            Move suggestedMove = longTermBestList.MaxObject((item) => item.scoreSage);
+            return suggestedMove;
+
+        }
+
 
 
     }

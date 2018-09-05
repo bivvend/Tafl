@@ -52,10 +52,18 @@ namespace Tafl.AI
 
                 inputMoveList[1].ForEach(item =>
                 {
-                    if (item.FindTheKing(item.board, true).SquareType == Model.Square.square_type.Corner)
+                    SimpleSquare kingSquareWin = item.FindTheKing(item.board, true);
+                    if (kingSquareWin.SquareType == Model.Square.square_type.Corner)
                     {
                         numberOfLosesDepth1++;
                     }
+                    if(IsNextToCorner(kingSquareWin, item.board))
+                    {
+                        numberOfLosesDepth1++;
+                    }
+
+                    //if the king can get to a square next to a corner it is also a definte loss effectively at depth 3
+
                 });
 
                 runTime = (DateTime.Now - start).TotalSeconds;
@@ -146,6 +154,40 @@ namespace Tafl.AI
         {
             double fraction = 0.0d;
             return fraction;
+        }
+
+        /// <summary>
+        /// Checks to see if a square is next to a corner
+        /// </summary>
+        /// <param name="square"></param>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        public bool IsNextToCorner(SimpleSquare square, SimpleBoard board)
+        {
+            int sizeX = board.OccupationArray.GetLength(0);
+            int sizeY = board.OccupationArray.GetLength(1);
+            int posX = square.Column;
+            int posY = square.Row;
+
+            if (posX == 0 && posY == 1)
+                return true;
+            if (posX == 1 && posY == 0)
+                return true;
+            if (posX == 0 && posY == sizeY -2)
+                return true;
+            if (posX == 1 && posY == sizeY - 1)
+                return true;
+            if (posX == sizeX -2 && posY == 0)
+                return true;
+            if (posX == sizeX - 1 && posY == 1)
+                return true;
+            if (posX == sizeX -2 && posY == sizeY - 1)
+                return true;
+            if (posX == sizeX - 1 && posY == sizeY - 2)
+                return true;
+
+            return false;
+
         }
 
     }

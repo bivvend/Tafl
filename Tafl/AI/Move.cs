@@ -234,6 +234,8 @@ namespace Tafl.AI
             }
         }
 
+        
+
         public bool CheckForAttackerVictory()
         {
             //Check to see if King is surrounded on 4 sides

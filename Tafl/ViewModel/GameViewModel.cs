@@ -69,6 +69,22 @@ namespace Tafl.ViewModel
 
         }
 
+        private ObservableCollection<MoveViewModel> moveHistory;
+        public ObservableCollection<MoveViewModel> MoveHistory
+        {
+            get
+            {
+                return moveHistory;
+            }
+            set
+            {
+                moveHistory = value;
+                RaisePropertyChanged("MoveHistory");
+
+            }
+
+        }
+
         private double runTime;
         public double RunTime
         {
@@ -188,6 +204,7 @@ namespace Tafl.ViewModel
             Board = boardModel;
             Game = gameModel;
             MoveList = Game.MoveViewModelList;
+            MoveHistory = new ObservableCollection<MoveViewModel>();
             //Attach commands to relays
             NewBoardCommand = new RelayCommand(NewBoardExecute, param => true);
             AIDefenderSetChanged = new RelayCommand(AIDefenderSetChangedExecute, param => true);
@@ -200,6 +217,7 @@ namespace Tafl.ViewModel
         public void NewBoardExecute(object obj)
         {
             Board.CreateBoard();
+            MoveHistory.Clear();
             CurrentTurnState = Model.GameModel.TurnState.Attacker;
         }
 
@@ -232,8 +250,10 @@ namespace Tafl.ViewModel
                 //AIMove = await Game.RunAITurn(Board.GetSimpleBoard());
                 AIMove = await Game.RunAITurnLowerMem(Board.GetSimpleBoard());
                 await boardViewModel.ApplyAIMove(AIMove);
+                
                 RunTime = AIMove.runTime;
             });
+            MoveHistory.Add(new MoveViewModel(AIMove));
             Thinking = false;
             
 

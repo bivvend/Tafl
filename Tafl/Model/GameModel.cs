@@ -104,10 +104,24 @@ namespace Tafl.Model
 
         public ObservableCollection<MoveViewModel> MoveViewModelList;
 
+        private List<Move> moveHistory;
+        public List<Move> MoveHistory
+        {
+            get
+            {
+                return moveHistory;
+            }
+            set
+            {
+                moveHistory = value;
+            }
+        }
+
         public GameModel()
         {
             MoveViewModelList = new ObservableCollection<MoveViewModel>();
             Sage = new Sage();
+            MoveHistory = new List<Move>();
         }
 
         private async void InvokeAction (Action a)
@@ -120,13 +134,12 @@ namespace Tafl.Model
             this.BaseBoard = startBoard;
 
             List<Move> moveList_0 = new List<Move>();
-            List<Move> moveList_1 = new List<Move>();
-            List<Move> moveList_2 = new List<Move>();
+
             InvokeAction(new Action(() => MoveViewModelList.Clear()));
             DateTime start = DateTime.Now;
             Sage.bestList = new List<Move>();
             Sage.longTermBestList = new List<Move>();
-            List<List<Move>> moveList = new List<List<Move>>();
+            
             //Fill list with all possible moves of depth 0
 
             moveList_0= BaseBoard.GetPossibleMoves(this.currentTurnState, null, 0);
@@ -134,12 +147,15 @@ namespace Tafl.Model
             Object _lock = new object();
 
             //Create Depth 1 moves
-            moveList_0.ForEach((m) =>
+            Parallel.ForEach(moveList_0, (m) =>
             {
                 //Make the moves
                 m.MakeMove(m, BaseBoard);
-                
+
                 //Look at all the depth 1 moves for the opposing side
+
+                List<Move> moveList_1 = new List<Move>();
+                List<Move> moveList_2 = new List<Move>();
 
                 if (currentTurnState == TurnState.Defender)
                 {
@@ -179,7 +195,7 @@ namespace Tafl.Model
 
 
                     //build List<List<Move>>
-                    moveList.Clear();
+                    List<List<Move>> moveList = new List<List<Move>>();
                     moveList.Add(new List<Move>());
                     moveList[0].Add(m);
                     moveList.Add(moveList_1);
@@ -197,8 +213,16 @@ namespace Tafl.Model
                                 //Total number of takes in the pipeline downwards
                                 if (item.numberTakesAttacker > 0 || item.numberTakesDefender > 0)
                                 {
-                                     m.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
-                                        m.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                                    if (i == 1)
+                                    {
+                                        item.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                                        item.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                                    }
+                                    if (i == 2)
+                                    {
+                                        item.parent.parent.numberTakesAttackerAtDepth[i] += item.numberTakesAttacker;
+                                        item.parent.parent.numberTakesDefenderAtDepth[i] += item.numberTakesDefender;
+                                    }
                                 }
                             }
                             else
@@ -212,7 +236,7 @@ namespace Tafl.Model
 
                     }
 
-                    Sage.ProcessMoves(moveList, currentTurnState);
+                    Sage.ProcessMovesLowerMem(moveList, currentTurnState);
                  
 
                 });
@@ -224,7 +248,7 @@ namespace Tafl.Model
             
             TimeSpan duration = (DateTime.Now - start);
             double runtime = duration.TotalSeconds;
-            Move bestMove = Sage.longTermBestList.MaxObject((item) => item.scoreSage);
+            Move bestMove = Sage.PickBestLowerMem();
 
 
             InvokeAction(new Action(() =>

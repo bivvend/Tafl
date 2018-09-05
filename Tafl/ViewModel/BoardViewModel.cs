@@ -84,6 +84,9 @@ namespace Tafl.ViewModel
                     {
                         if (BoardSetup.MovePiece(SelectedSquare.Row, SelectedSquare.Column, square.Row, square.Column))
                         {
+                            Move moveSent = new Move(SelectedSquare.Row, SelectedSquare.Column, square.Row, square.Column, null, 0);
+                            GameVModel.MoveHistory.Add(new MoveViewModel(moveSent));
+
                             SelectedSquare.Selected = false;
                             SelectedSquare = null;
                             Board.ToList().ForEach((item) => item.Highlighted = false);
@@ -122,7 +125,9 @@ namespace Tafl.ViewModel
                                         AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
+                                        
                                     });
+                                    GameVModel.MoveHistory.Add(new MoveViewModel(AIMove));
                                     GameVModel.Thinking = false;
 
                                 }
@@ -140,7 +145,9 @@ namespace Tafl.ViewModel
                                         AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
+                                        
                                     });
+                                    GameVModel.MoveHistory.Add(new MoveViewModel(AIMove));
                                     GameVModel.Thinking = false;
                                 }
                             }

@@ -60,8 +60,10 @@
 
             </Grid.RowDefinitions>
             <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Label>Best Moves</Label>
+                <Label>Best Move Pick</Label>
                 <ComboBox MinWidth="200" ItemsSource="{Binding MoveList}" DisplayMemberPath="Details" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"></ComboBox>
+                <Label>Moves History</Label>
+                <ComboBox MinWidth="200" ItemsSource="{Binding MoveHistory}" DisplayMemberPath="Details" IsSynchronizedWithCurrentItem="True" SelectedIndex="0"></ComboBox>
             </WrapPanel>
             <Label Grid.Row="1" Grid.Column="0"> Run time:</Label>
             <Label Grid.Row="1" Grid.Column="1" Content="{Binding RunTime}"></Label>

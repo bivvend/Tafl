@@ -14,13 +14,13 @@ namespace Tafl.AI
     public class General
     {
 
-        public double desireToTakeWhenAttacker = 10.0;
+        public double desireToTakeWhenAttacker = 100.0;
         public double desireToTakeWhenDefender = 10.0;
 
         public double desireToAvoidTakeAttacker = 6.0;
         public double desireToAvoidTakeDefender = 2.0;
 
-        public double desireToTakeWhenAttackerDepth2 = 1.0;
+        public double desireToTakeWhenAttackerDepth2 = 10.0;
         public double desireToTakeWhenDefenderDepth2 = 1.0;
 
 
@@ -84,7 +84,10 @@ namespace Tafl.AI
                 suggestedMoves.ForEach((item) =>
                 {
                     item.scoreGeneral = (double)item.numberTakesAttackerAtDepth[0] * (desireToTakeWhenAttacker / maxAttackerTakeDepth0) - (double)item.numberTakesDefenderAtDepth[1] * (desireToAvoidTakeAttacker / maxDefenderTakeDepth1) + (double)item.numberTakesAttackerAtDepth[2] * (desireToTakeWhenAttackerDepth2 / maxAttackerTakeDepth2);
-
+                    if (item.scoreGeneral > 1.0)
+                    {
+                        int i = 0;
+                    }
                 });
             }
 
