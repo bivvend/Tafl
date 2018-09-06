@@ -52,33 +52,23 @@ namespace Tafl.AI
 
                 inputMoveList[1].ForEach(item =>
                 {
+                    //If a loss is possible all moves in which the loss can happen should be penalised.
                     SimpleSquare kingSquareWin = item.FindTheKing(item.board, true);
                     if (kingSquareWin.SquareType == Model.Square.square_type.Corner)
                     {
                         numberOfLosesDepth1++;
+                        item.parent.scoreAssassin -= desireNotToLoseDepth1;
                     }
-                    if(IsNextToCorner(kingSquareWin, item.board))
+                    //if the king can get to a square next to a corner it is also a definte loss effectively at depth 3
+                    //so penalise at depth 1
+                    if (IsNextToCorner(kingSquareWin, item.board))
                     {
                         numberOfLosesDepth1++;
+                        item.parent.scoreAssassin -= desireNotToLoseDepth1;
                     }
-
-                    //if the king can get to a square next to a corner it is also a definte loss effectively at depth 3
+                    
 
                 });
-
-                runTime = (DateTime.Now - start).TotalSeconds;
-
-                //If a loss is possible all moves in which the loss can happen should be penalised.
-                if (numberOfLosesDepth1 > 0)
-                {
-                    inputMoveList[1].ForEach(item =>
-                    {
-                        if (item.FindTheKing(item.board, true).SquareType == Model.Square.square_type.Corner)
-                        {
-                            item.parent.scoreAssassin -= desireNotToLoseDepth1;
-                        }
-                    });
-                }
 
                 runTime = (DateTime.Now - start).TotalSeconds;
 

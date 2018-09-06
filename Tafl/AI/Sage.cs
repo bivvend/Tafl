@@ -42,21 +42,29 @@ namespace Tafl.AI
             longTermBestList = new List<Move>();
         }
 
-        public void ProcessMoves(List<List<Move>> input, TurnState turnState)
+        public void ProcessMoves(List<List<Move>> input, TurnState turnState, bool lowMem = true)
         {
             this.inputMoveList = input;
             this.currentTurnState = turnState;
 
             bestList = new List<Move>();
-            
+
 
             //Ask general to process moves
-            bestList.AddRange(general.Evaluate(inputMoveList, turnState));
-            longTermBestList.AddRange(general.Evaluate(inputMoveList, turnState));
+            if (lowMem)
+            {
+                bestList.AddRange(general.EvaluateLowMem(inputMoveList, turnState));
+                longTermBestList.AddRange(general.EvaluateLowMem(inputMoveList, turnState));
+            }
+            else
+            {
+
+            }
 
             if (turnState == TurnState.Attacker)
             {
                 bestList.AddRange(assassin.Evaluate(inputMoveList, turnState));
+
                 longTermBestList.AddRange(assassin.Evaluate(inputMoveList, turnState));
             }
 
@@ -96,7 +104,7 @@ namespace Tafl.AI
                 lock (locker)
                 {
                     //Ask general to process moves            
-                    longTermBestList.AddRange(general.Evaluate(inputMoveList, turnState));
+                    longTermBestList.AddRange(general.EvaluateLowMem(inputMoveList, turnState));
 
                     if (turnState == TurnState.Attacker)
                     {

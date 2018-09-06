@@ -393,7 +393,7 @@ namespace Tafl.Model
 
             }
 
-            Sage.ProcessMoves(moveList, currentTurnState);
+            Sage.ProcessMoves(moveList, currentTurnState, false);
 
 
             InvokeAction(new Action(() =>

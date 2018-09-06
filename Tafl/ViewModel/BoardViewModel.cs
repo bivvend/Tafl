@@ -45,6 +45,20 @@ namespace Tafl.ViewModel
             }
         }
 
+        private bool _lowMem;
+        public bool lowMem
+        {
+            get
+            {
+                return _lowMem;
+            }
+            set
+            {
+                _lowMem = value;
+                RaisePropertyChanged("lowMem");
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void RaisePropertyChanged(string propertyName)
@@ -65,7 +79,7 @@ namespace Tafl.ViewModel
             BoardSetup.SizeX = 11;
             BoardSetup.SizeY = 11;
             Game = game;
-
+            lowMem = true;
             //SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
             SquareClickCommand = new RelayCommand(SquareClickExecute, param => true);
             EmptySquareClickCommand = new RelayCommand(EmptySquareClickExecute, param => true);
@@ -121,8 +135,10 @@ namespace Tafl.ViewModel
                                     GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
-                                        //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
-                                        AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
+                                        if(lowMem)                                        
+                                            AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
+                                        else
+                                            AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
                                         
@@ -141,8 +157,10 @@ namespace Tafl.ViewModel
                                     GameVModel.Thinking = true;
                                     await Task.Run(async () =>
                                     {
-                                        //AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
-                                        AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
+                                        if (lowMem)
+                                            AIMove = await GameVModel.Game.RunAITurnLowerMem(BoardSetup.GetSimpleBoard());
+                                        else
+                                            AIMove = await GameVModel.Game.RunAITurn(BoardSetup.GetSimpleBoard());
                                         await ApplyAIMove(AIMove);
                                         GameVModel.RunTime = AIMove.runTime;
                                         
